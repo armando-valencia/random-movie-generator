@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Switch } from 'antd';
+import { FaChevronCircleDown } from 'react-icons/fa';
+import { Menu, MenuButton, MenuList, MenuItem, Button } from '@chakra-ui/react';
 
 const genres = [
     // { id: 1, genre: 'Biography' },
@@ -26,7 +27,7 @@ const genres = [
 ];
 
 const SelectGenre = ({ genreChanger, idChanger }) => {
-    const [showGenres, setShowGenres] = useState(false);
+    const [showGenres, setShowGenres] = useState(null);
 
     const handleSwitchChange = () => {
         setShowGenres(!showGenres);
@@ -42,31 +43,59 @@ const SelectGenre = ({ genreChanger, idChanger }) => {
     };
 
     return (
-        <div className="text-center">
-            <h2>Want to select by genre?</h2>
-            <Switch
-                checkedChildren="Yes"
-                unCheckedChildren="No"
-                onChange={() => handleSwitchChange()}
-            />
+        <div className="text-center p-2">
+            <h2 className="text-xl p-2">Want to select a genre?</h2>
+            <div className="p-2">
+                <Button
+                    bg={showGenres === true ? 'brand.600' : `brand.700`}
+                    textColor={showGenres === true ? 'brand.700' : `brand.600`}
+                    onClick={(e) => setShowGenres(true)}
+                    className="m-2"
+                >
+                    Yes
+                </Button>
+                <Button
+                    bg={showGenres === true ? 'brand.700' : `brand.600`}
+                    textColor={showGenres === true ? 'brand.600' : `brand.700`}
+                    onClick={(e) => {
+                        setShowGenres(false);
+                        genreChanger(null);
+                        idChanger(null);
+                    }}
+                    className="m-2"
+                >
+                    No
+                </Button>
+            </div>
 
-            {showGenres &&
-                genres.map((genre) => (
-                    <p
-                        key={genre.genre}
-                        className={`hover:text-white cursor-pointer ${
-                            genreChanger == genre.genre ? 'text-gray' : ''
-                        }`}
-                        onClick={() => {
-                            genreChanger(genre.genre);
-                            idChanger(genre.id);
-                        }}
+            {showGenres && (
+                <Menu>
+                    <MenuButton
+                        as={Button}
+                        rightIcon={<FaChevronCircleDown />}
+                        bg="brand.700"
+                        textColor="brand.600"
+                        className="hover:text-black p-2"
                     >
-                        {genre.genre}
-                    </p>
-                ))}
-
-            {/* <button onClick={clearGenre}>Clear</button> */}
+                        Select Genre
+                    </MenuButton>
+                    <MenuList bg="brand.700">
+                        {genres.map((genre) => (
+                            <MenuItem
+                                key={genre.genre}
+                                onClick={() => {
+                                    genreChanger(genre.genre);
+                                    idChanger(genre.id);
+                                }}
+                                bg="brand.700"
+                                // _hover={(bg = '#fff')}
+                            >
+                                {genre.genre}
+                            </MenuItem>
+                        ))}
+                    </MenuList>
+                </Menu>
+            )}
         </div>
     );
 };
