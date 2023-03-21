@@ -14,9 +14,10 @@ export default function useFetchByGenre(url) {
         if (url) {
             let ignore = false;
             fetch(url, options)
-                .then((response) => response.json())
-                .then((json) => {
+                .then(response => response.json())
+                .then(json => {
                     if (!ignore) {
+                        console.log(json);
                         setData(json);
                     }
                 });

@@ -29,40 +29,27 @@ const genres = [
 const SelectGenre = ({ genreChanger, idChanger }) => {
     const [showGenres, setShowGenres] = useState(null);
 
-    const handleSwitchChange = () => {
-        setShowGenres(!showGenres);
-        console.log(showGenres);
-        if (showGenres !== false) {
-            genreChanger(null);
-        }
-    };
-
-    const clearGenre = () => {
-        genreChanger(null);
-        idChanger(null);
-    };
-
     return (
         <div className="text-center p-2">
-            <h2 className="text-xl p-2">Want to select a genre?</h2>
+            <h2 className="text-xl text-white p-2">Want to select a genre?</h2>
             <div className="p-2">
                 <Button
-                    bg={showGenres === true ? 'brand.600' : `brand.700`}
-                    textColor={showGenres === true ? 'brand.700' : `brand.600`}
-                    onClick={(e) => setShowGenres(true)}
-                    className="m-2"
+                    variant="custom"
+                    colorScheme="brand"
+                    onClick={e => setShowGenres(true)}
+                    className="m-1"
                 >
                     Yes
                 </Button>
                 <Button
-                    bg={showGenres === true ? 'brand.700' : `brand.600`}
-                    textColor={showGenres === true ? 'brand.600' : `brand.700`}
-                    onClick={(e) => {
+                    variant="custom"
+                    colorScheme="brand"
+                    onClick={e => {
                         setShowGenres(false);
                         genreChanger(null);
                         idChanger(null);
                     }}
-                    className="m-2"
+                    className="m-1"
                 >
                     No
                 </Button>
@@ -73,22 +60,18 @@ const SelectGenre = ({ genreChanger, idChanger }) => {
                     <MenuButton
                         as={Button}
                         rightIcon={<FaChevronCircleDown />}
-                        bg="brand.700"
-                        textColor="brand.600"
-                        className="hover:text-black p-2"
+                        colorScheme="brand"
                     >
                         Select Genre
                     </MenuButton>
-                    <MenuList bg="brand.700">
-                        {genres.map((genre) => (
+                    <MenuList>
+                        {genres.map(genre => (
                             <MenuItem
                                 key={genre.genre}
                                 onClick={() => {
                                     genreChanger(genre.genre);
                                     idChanger(genre.id);
                                 }}
-                                bg="brand.700"
-                                // _hover={(bg = '#fff')}
                             >
                                 {genre.genre}
                             </MenuItem>
