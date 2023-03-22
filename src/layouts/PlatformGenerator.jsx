@@ -22,6 +22,7 @@ const PlatformGenerator = ({ page, service }) => {
                     <SelectGenre
                         genreChanger={setSelectedGenre}
                         idChanger={setSelectedGenreId}
+                        genre={selectedGenre}
                     />
                     <GenerateMovieButton
                         selectedGenre={selectedGenre}

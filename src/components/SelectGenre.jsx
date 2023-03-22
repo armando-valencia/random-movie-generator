@@ -26,8 +26,14 @@ const genres = [
     { id: 9648, genre: 'Mystery' },
 ];
 
-const SelectGenre = ({ genreChanger, idChanger }) => {
+const SelectGenre = ({ genreChanger, idChanger, genre }) => {
     const [showGenres, setShowGenres] = useState(null);
+
+    const onClickNo = () => {
+        setShowGenres(false);
+        genreChanger(null);
+        idChanger(null);
+    };
 
     return (
         <div className="text-center p-2">
@@ -35,7 +41,7 @@ const SelectGenre = ({ genreChanger, idChanger }) => {
             <div className="p-2">
                 <Button
                     variant="custom"
-                    colorScheme="brand"
+                    colorScheme={`${showGenres ? 'active' : 'brand'}`}
                     onClick={e => setShowGenres(true)}
                     className="m-1"
                 >
@@ -43,12 +49,8 @@ const SelectGenre = ({ genreChanger, idChanger }) => {
                 </Button>
                 <Button
                     variant="custom"
-                    colorScheme="brand"
-                    onClick={e => {
-                        setShowGenres(false);
-                        genreChanger(null);
-                        idChanger(null);
-                    }}
+                    colorScheme={`${showGenres ? 'brand' : 'active'}`}
+                    onClick={e => onClickNo()}
                     className="m-1"
                 >
                     No
@@ -61,10 +63,12 @@ const SelectGenre = ({ genreChanger, idChanger }) => {
                         as={Button}
                         rightIcon={<FaChevronCircleDown />}
                         colorScheme="brand"
+                        variant="custom"
+                        value={genre}
                     >
-                        Select Genre
+                        {genre !== null ? `Genre: ${genre}` : 'Select Genre'}
                     </MenuButton>
-                    <MenuList>
+                    <MenuList bg="#2C3333">
                         {genres.map(genre => (
                             <MenuItem
                                 key={genre.genre}
@@ -72,6 +76,9 @@ const SelectGenre = ({ genreChanger, idChanger }) => {
                                     genreChanger(genre.genre);
                                     idChanger(genre.id);
                                 }}
+                                closeOnSelect="true"
+                                bg="#2C3333"
+                                _hover={{ bg: '#242424' }}
                             >
                                 {genre.genre}
                             </MenuItem>
