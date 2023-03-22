@@ -7,6 +7,10 @@ export const theme = extendTheme({
             100: '#2C3333', // shade of gray
             200: '#31f610', // neon green
         },
+        active: {
+            100: '#31f610', // neon green
+            200: '#2C3333', // shade of gray
+        },
     },
     components: {
         Button: buttonTheme,
