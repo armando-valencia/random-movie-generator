@@ -38,7 +38,7 @@ const SelectGenre = ({ genreChanger, idChanger, genre }) => {
     return (
         <div className="text-center p-2">
             <h2 className="text-xl text-white p-2">Want to select a genre?</h2>
-            <div className="p-2">
+            <div className="p-2 m-2">
                 <Button
                     variant="custom"
                     colorScheme={`${showGenres ? 'active' : 'brand'}`}
@@ -65,6 +65,7 @@ const SelectGenre = ({ genreChanger, idChanger, genre }) => {
                         colorScheme="brand"
                         variant="custom"
                         value={genre}
+                        marginBottom={2.5}
                     >
                         {genre !== null ? `Genre: ${genre}` : 'Select Genre'}
                     </MenuButton>

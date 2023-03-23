@@ -14,10 +14,9 @@ export default function useFetchMovie(url) {
         if (url) {
             let ignore = false;
             fetch(url, options)
-                .then((response) => response.json())
-                .then((json) => {
+                .then(response => response.json())
+                .then(json => {
                     if (!ignore) {
-                        console.log(json);
                         setData(json);
                     }
                 });
@@ -26,5 +25,7 @@ export default function useFetchMovie(url) {
             };
         }
     }, [url]);
+
+    console.log(data);
     return data;
 }
