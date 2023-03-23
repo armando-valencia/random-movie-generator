@@ -2,6 +2,8 @@ import { useState } from 'react';
 import BackButton from '../components/BackButton';
 import GenerateMovieButton from '../components/GenerateMovieButton';
 import SelectGenre from '../components/SelectGenre';
+import MovieModal from '../components/MovieModal';
+import { useDisclosure } from '@chakra-ui/react';
 
 const PlatformGenerator = ({ page, service }) => {
     const serviceStr = `service=${service}`;
@@ -11,6 +13,8 @@ const PlatformGenerator = ({ page, service }) => {
 
     const [selectedGenre, setSelectedGenre] = useState(null);
     const [selectedGenreId, setSelectedGenreId] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(null);
+    const { onOpen, onClose } = useDisclosure();
 
     return (
         <>
@@ -25,12 +29,21 @@ const PlatformGenerator = ({ page, service }) => {
                         genre={selectedGenre}
                     />
                     <GenerateMovieButton
-                        selectedGenre={selectedGenre}
                         selectedGenreId={selectedGenreId}
                         url={url}
+                        setIsModalOpen={setIsModalOpen}
                     />
                 </div>
             </div>
+
+            {isModalOpen && (
+                <MovieModal
+                    isModalOpen={isModalOpen}
+                    onOpen={onOpen}
+                    onClose={onClose}
+                    setIsModalOpen={setIsModalOpen}
+                />
+            )}
         </>
     );
 };
