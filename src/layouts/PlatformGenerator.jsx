@@ -6,14 +6,12 @@ import MovieModal from '../components/MovieModal';
 import { useDisclosure } from '@chakra-ui/react';
 
 const PlatformGenerator = ({ page, service }) => {
-    const serviceStr = `service=${service}`;
-    const url =
-        'https://streaming-availability.p.rapidapi.com/v2/search/basic?country=us&output_language=en&show_type=movie&show_original_language=en&' +
-        serviceStr;
+    const url = `https://streaming-availability.p.rapidapi.com/v2/search/basic?country=us&output_language=en&show_type=movie&show_original_language=en&services=${service}`;
 
     const [selectedGenre, setSelectedGenre] = useState(null);
     const [selectedGenreId, setSelectedGenreId] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [data, setData] = useState(null);
     const { onOpen, onClose } = useDisclosure();
 
     return (
@@ -32,6 +30,8 @@ const PlatformGenerator = ({ page, service }) => {
                         selectedGenreId={selectedGenreId}
                         url={url}
                         setIsModalOpen={setIsModalOpen}
+                        setData={setData}
+                        data={data}
                     />
                 </div>
             </div>
@@ -42,6 +42,7 @@ const PlatformGenerator = ({ page, service }) => {
                     onOpen={onOpen}
                     onClose={onClose}
                     setIsModalOpen={setIsModalOpen}
+                    data={data}
                 />
             )}
         </>

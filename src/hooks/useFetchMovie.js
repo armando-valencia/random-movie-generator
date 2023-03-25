@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-export default function useFetchMovie(url) {
+export default function useFetchMovie(url, isFetching, setIsFetching) {
     const [data, setData] = useState(null);
     const options = {
         method: 'GET',
@@ -10,22 +10,17 @@ export default function useFetchMovie(url) {
         },
     };
 
-    useEffect(() => {
-        if (url) {
-            let ignore = false;
-            fetch(url, options)
-                .then(response => response.json())
-                .then(json => {
-                    if (!ignore) {
-                        setData(json);
-                    }
-                });
-            return () => {
-                ignore = true;
-            };
-        }
-    }, [url]);
+    if (url && isFetching) {
+        fetch(url, options)
+            .then(response => response.json())
+            .then(response => {
+                setData([response]);
+            })
+            .catch(err => console.error(err));
 
-    console.log(data);
+        setIsFetching(false);
+    }
+
+    console.log('DATA', data);
     return data;
 }

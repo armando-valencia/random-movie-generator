@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 export default function useFetchByGenre(url) {
     const [data, setData] = useState(null);
@@ -10,21 +10,19 @@ export default function useFetchByGenre(url) {
         },
     };
 
-    useEffect(() => {
-        if (url) {
-            let ignore = false;
-            fetch(url, options)
-                .then(response => response.json())
-                .then(json => {
-                    if (!ignore) {
-                        console.log(json);
-                        setData(json);
-                    }
-                });
-            return () => {
-                ignore = true;
-            };
-        }
-    }, [url]);
+    if (url) {
+        let ignore = false;
+        fetch(url, options)
+            .then(response => response.json())
+            .then(json => {
+                if (!ignore) {
+                    console.log(json);
+                    setData(json);
+                }
+            });
+        return () => {
+            ignore = true;
+        };
+    }
     return data;
 }
