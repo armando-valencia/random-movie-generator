@@ -1,17 +1,18 @@
 import { useState } from 'react';
+import { useDisclosure } from '@chakra-ui/react';
 import BackButton from '../components/BackButton';
 import GenerateMovieButton from '../components/GenerateMovieButton';
-import SelectGenre from '../components/SelectGenre';
+// import SelectGenre from '../components/SelectGenre';
 import MovieModal from '../components/MovieModal';
-import { useDisclosure } from '@chakra-ui/react';
 
 const PlatformGenerator = ({ page, service }) => {
     const url = `https://streaming-availability.p.rapidapi.com/v2/search/basic?country=us&output_language=en&show_type=movie&show_original_language=en&services=${service}`;
 
-    const [selectedGenre, setSelectedGenre] = useState(null);
-    const [selectedGenreId, setSelectedGenreId] = useState(null);
+    // const [selectedGenre, setSelectedGenre] = useState(null);
+    // const [selectedGenreId, setSelectedGenreId] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [data, setData] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
     const { onOpen, onClose } = useDisclosure();
 
     return (
@@ -19,19 +20,20 @@ const PlatformGenerator = ({ page, service }) => {
             <BackButton />
 
             <div className="text-center">
-                <h1 className="text-2xl font-semibold">{page}</h1>
+                <h1 className="text-2xl font-semibold p-4">{page}</h1>
                 <div>
-                    <SelectGenre
+                    {/* <SelectGenre
                         genreChanger={setSelectedGenre}
                         idChanger={setSelectedGenreId}
                         genre={selectedGenre}
-                    />
+                    /> */}
                     <GenerateMovieButton
-                        selectedGenreId={selectedGenreId}
+                        // selectedGenreId={selectedGenreId}
                         url={url}
                         setIsModalOpen={setIsModalOpen}
                         setData={setData}
-                        data={data}
+                        // data={data}
+                        setIsLoading={setIsLoading}
                     />
                 </div>
             </div>
@@ -43,6 +45,7 @@ const PlatformGenerator = ({ page, service }) => {
                     onClose={onClose}
                     setIsModalOpen={setIsModalOpen}
                     data={data}
+                    isLoading={isLoading}
                 />
             )}
         </>
