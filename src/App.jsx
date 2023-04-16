@@ -1,17 +1,21 @@
 import { Routes, Route } from 'react-router-dom';
-import HBO from './pages/HBO';
 import Home from './pages/Home';
-import Hulu from './pages/Hulu';
-import Netflix from './pages/Netflix';
+import StreamingService from './pages/StreamingService';
 
 function App() {
     return (
-        <div className="flex justify-center items-center h-screen text-[#31f610]">
+        <div className="flex justify-center items-center h-screen text-[#F0EB8D]">
             <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/netflix" element={<Netflix />} />
-                <Route path="/hulu" element={<Hulu />} />
-                <Route path="/hbo" element={<HBO />} />
+                <Route
+                    path="/netflix"
+                    element={<StreamingService name="Netflix" />}
+                />
+                <Route
+                    path="/hulu"
+                    element={<StreamingService name="Hulu" />}
+                />
+                <Route path="/hbo" element={<StreamingService name="HBO" />} />
             </Routes>
         </div>
     );
