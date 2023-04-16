@@ -5,10 +5,10 @@ export const theme = extendTheme({
     colors: {
         brand: {
             100: '#2C3333', // shade of gray
-            200: '#31f610', // neon green
+            200: '#F0EB8D', // neon green
         },
         active: {
-            100: '#31f610', // neon green
+            100: '#F0EB8D', // neon green
             200: '#2C3333', // shade of gray
         },
     },
