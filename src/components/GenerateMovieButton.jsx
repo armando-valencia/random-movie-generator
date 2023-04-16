@@ -1,22 +1,56 @@
+import { Button } from '@chakra-ui/react';
+import { useEffect } from 'react';
 import useFetchMovie from '../hooks/useFetchMovie';
 
-const GenerateMovieButton = ({ url, selectedGenre, selectedGenreId }) => {
-    // const fullUrl =
-    //     selectedGenreId !== null || selectedGenreId !== ''
-    //         ? `${url}&genre=${selectedGenreId}`
-    //         : url;
+// selectedGenreId,
+const GenerateMovieButton = ({
+    url,
+    setIsModalOpen,
+    setData,
+    setIsLoading,
+}) => {
+    // fullUrl = selectedGenreId ? `${url}&genre=${selectedGenreId}` : url;
 
-    // const fetchMovie = useFetchMovie(fullUrl);
+    const options = {
+        method: 'GET',
+        headers: {
+            'X-RapidAPI-Key': import.meta.env.VITE_API_KEY,
+            'X-RapidAPI-Host': import.meta.env.VITE_API_HOST,
+        },
+    };
+
+    useEffect(() => {
+        useFetchMovie(url, options);
+    }, []);
+
+    const fetchData = async () => {
+        try {
+            let response = await fetch(url, options);
+            let data = await response.json();
+            setData(data.result);
+            console.log(`data: `, data.result);
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    const callFetch = async () => {
+        setIsModalOpen(true);
+        setIsLoading(true);
+
+        await fetchData();
+
+        setIsLoading(false);
+    };
 
     return (
-        <>
-            <button
-                className="m-2 p-2 rounded-lg border border-[#31f610] text-[#31f610] hover:bg-[#31f610] hover:text-[#242424] hover:font-semibold"
-                // onClick={fetchMovie}
-            >
-                Generate {selectedGenre} movie
-            </button>
-        </>
+        <Button
+            variant="outlined"
+            colorScheme="brand"
+            onClick={e => callFetch()}
+        >
+            Generate!
+        </Button>
     );
 };
 export default GenerateMovieButton;
