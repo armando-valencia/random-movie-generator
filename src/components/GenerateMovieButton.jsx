@@ -1,10 +1,15 @@
 import { Button } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect } from 'react';
+import useFetchMovie from '../hooks/useFetchMovie';
 
-// prettier-ignore
-const GenerateMovieButton = ({ url, selectedGenreId, setIsModalOpen, setData, data }) => {
+// selectedGenreId,
+const GenerateMovieButton = ({
+    url,
+    setIsModalOpen,
+    setData,
+    setIsLoading,
+}) => {
     // fullUrl = selectedGenreId ? `${url}&genre=${selectedGenreId}` : url;
-    const [isFetching, setIsFetching] = useState(false);
 
     const options = {
         method: 'GET',
@@ -14,38 +19,38 @@ const GenerateMovieButton = ({ url, selectedGenreId, setIsModalOpen, setData, da
         },
     };
 
-    const callFetchHook = () => {
-        if (url && isFetching) {
+    useEffect(() => {
+        useFetchMovie(url, options);
+    }, []);
 
-            console.log('begin fetch');
-            fetch(url, options)
-                .then(response => response.json())
-                .then(response => {
-                    console.log('RES', response.result);
-                    setData(response.result);
-                })
-                .catch(err => console.error(err));
-
-            setIsFetching(false);
-            console.log('after fetch');
+    const fetchData = async () => {
+        try {
+            let response = await fetch(url, options);
+            let data = await response.json();
+            setData(data.result);
+            console.log(`data: `, data.result);
+        } catch (err) {
+            console.log(err);
         }
     };
 
+    const callFetch = async () => {
+        setIsModalOpen(true);
+        setIsLoading(true);
+
+        await fetchData();
+
+        setIsLoading(false);
+    };
+
     return (
-        <>
-            <Button
-                variant="outlined"
-                colorScheme="brand"
-                onClick={() => {
-                    setIsFetching(true);
-                    setIsModalOpen(true);
-                    callFetchHook();
-                    console.log('DATA:', data);
-                }}
-            >
-                Generate!
-            </Button>
-        </>
+        <Button
+            variant="outlined"
+            colorScheme="brand"
+            onClick={e => callFetch()}
+        >
+            Generate!
+        </Button>
     );
 };
 export default GenerateMovieButton;
