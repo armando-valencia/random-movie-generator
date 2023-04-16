@@ -2,3 +2,4 @@
 
 ### Todo:
 - Add genre filter
+- Add pagniation
