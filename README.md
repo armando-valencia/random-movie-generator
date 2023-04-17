@@ -8,4 +8,4 @@ This is a **React** app built with **Tailwind** for styling and **ChakraUI** for
 - **Problem**: Too vague of a generator. Filtering by genre should be an option.
    - **Solution**: Add genre filtering
 - **Problem**: API calls return 8 results at a time. There are more than 8 movies in the API.
-   - **Solution**: Add pagniation
+   - **Solution**: Add pagination
