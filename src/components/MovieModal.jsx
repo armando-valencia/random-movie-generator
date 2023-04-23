@@ -13,7 +13,7 @@ let movieDesc;
 
 // prettier-ignore
 const MovieModal = ({ isModalOpen, onClose, setIsModalOpen, data, isLoading }) => {
-    if (data !== null) {
+    if (data && data.length > 0) {
         let movieIndex = data[Math.floor(Math.random() * data.length)];
         movieTitle = movieIndex.title;
         movieDesc = movieIndex.overview;
