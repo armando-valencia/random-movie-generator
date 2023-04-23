@@ -4,7 +4,7 @@
 
 This is a random movie generator that selects a movie based on the platform you select. Currently, this project only supports HBO Max, Hulu, and Netflix.
 
-### How it use it
+### How to use it
 
 1. Select a platform.
 2. Click generate to fetch movie data.
