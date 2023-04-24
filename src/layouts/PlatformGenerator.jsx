@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Spinner, useDisclosure } from '@chakra-ui/react';
 import BackButton from '../components/BackButton';
-import GenerateMovieButton from '../components/GenerateMovieButton';
 import MovieModal from '../components/MovieModal';
 import { API_BASE_URL } from '../util/constants';
+import { Button } from '@chakra-ui/react';
 
 const options = {
     method: 'GET',
@@ -52,7 +52,7 @@ const PlatformGenerator = ({ page, service }) => {
     };
 
     if (loading) return <Spinner size="lg" />;
-    if (error) return <p>Something went wrong.</p>;
+    if (error) return <p>Something went wrong. Please try again.</p>;
 
     return (
         <>
@@ -61,11 +61,16 @@ const PlatformGenerator = ({ page, service }) => {
             <div className="text-center">
                 <h1 className="text-2xl font-semibold p-4">{page}</h1>
                 <div>
-                    {data ? <p>{data.title}</p> : 'no data'}
-                    <GenerateMovieButton
-                        setIsModalOpen={setIsModalOpen}
-                        fetchData={fetchData}
-                    />
+                    <Button
+                        variant="outlined"
+                        colorScheme="brand"
+                        onClick={e => {
+                            setIsModalOpen(true);
+                            fetchData();
+                        }}
+                    >
+                        Generate!
+                    </Button>
                 </div>
             </div>
 

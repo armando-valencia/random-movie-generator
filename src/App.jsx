@@ -4,7 +4,7 @@ import StreamingService from './pages/StreamingService';
 
 function App() {
     return (
-        <div className="flex justify-center items-center h-screen text-[#F0EB8D]">
+        <div className="flex justify-center items-center h-screen text-[#00ffff] bg-black/70">
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route
