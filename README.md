@@ -9,7 +9,7 @@ This is a random movie generator that selects a movie based on the platform you 
 1. Select a platform.
 2. Click generate to fetch movie data.
 3. A movie is generated!
-4. Click close and repeat step 2 to generate another movie, or click "back" to select a different platform.
+4. Click close and repeat step 2 to generate another movie, or click the back arrow to select a different platform.
 
 ### Todo:
 
