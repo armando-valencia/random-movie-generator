@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Spinner, useDisclosure } from '@chakra-ui/react';
-import BackButton from '../components/BackButton';
 import MovieModal from '../components/MovieModal';
 import { API_BASE_URL } from '../util/constants';
 import { Button } from '@chakra-ui/react';
+import { Link } from 'react-router-dom';
+import { IoReturnUpBackSharp } from 'react-icons/io5';
 
 const options = {
     method: 'GET',
@@ -56,22 +57,22 @@ const PlatformGenerator = ({ page, service }) => {
 
     return (
         <>
-            <BackButton />
+            <Link to="/" className="absolute top-6 left-6">
+                <IoReturnUpBackSharp size={45} className="" />
+            </Link>
 
             <div className="text-center">
                 <h1 className="text-2xl font-semibold p-4">{page}</h1>
-                <div>
-                    <Button
-                        variant="outlined"
-                        colorScheme="brand"
-                        onClick={e => {
-                            setIsModalOpen(true);
-                            fetchData();
-                        }}
-                    >
-                        Generate!
-                    </Button>
-                </div>
+                <Button
+                    variant="outlined"
+                    colorScheme="brand"
+                    onClick={e => {
+                        setIsModalOpen(true);
+                        fetchData();
+                    }}
+                >
+                    Generate!
+                </Button>
             </div>
 
             {isModalOpen && (
