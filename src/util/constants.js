@@ -2,6 +2,7 @@ export const API_BASE_URL =
     'https://streaming-availability.p.rapidapi.com/v2/search/basic?country=us&output_language=en&show_type=movie&show_original_language=en';
 
 export const HULU_CURSORS = [
+    '',
     '60200:100% Wolf',
     '109468:12th & Delaware',
     '106371:2 Minutes of Fame',

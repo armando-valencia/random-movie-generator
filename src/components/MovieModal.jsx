@@ -8,16 +8,8 @@ import {
     Spinner,
 } from '@chakra-ui/react';
 
-let movieTitle;
-let movieDesc;
-
 // prettier-ignore
-const MovieModal = ({ isModalOpen, onClose, setIsModalOpen, data, isLoading }) => {
-    if (data && data.length > 0) {
-        let movieIndex = data[Math.floor(Math.random() * data.length)];
-        movieTitle = movieIndex.title;
-        movieDesc = movieIndex.overview;
-    }
+const MovieModal = ({ isModalOpen, onClose, setIsModalOpen, movie, isLoading }) => {
 
     return (
         <Modal isOpen={isModalOpen} onClose={onClose} isCentered size="xl">
@@ -34,16 +26,14 @@ const MovieModal = ({ isModalOpen, onClose, setIsModalOpen, data, isLoading }) =
                             padding={4}
                             marginTop={10}
                         >
-                            {data !== null && (
-                                <>
-                                    <h1 className="text-lg font-bold">
-                                        {movieTitle}
-                                    </h1>
-                                    <h2 className='text-white'>
-                                        {movieDesc}
-                                    </h2>
-                                </>
-                            )}
+                            <>
+                                <h1 className="text-lg font-bold">
+                                    {movie.title || 'no title'}
+                                </h1>
+                                <h2 className='text-white'>
+                                    {movie.overview || 'no description'}
+                                </h2>
+                            </>
                         </ModalBody>
 
                         <ModalFooter placeContent="center" paddingTop={10}>
