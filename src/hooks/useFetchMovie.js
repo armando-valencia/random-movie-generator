@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { HULU_CURSORS } from '../util/constants';
+import { API_BASE_URL, HULU_CURSORS } from '../util/constants';
 
 const options = {
     method: 'GET',
@@ -9,63 +9,49 @@ const options = {
     },
 };
 
-// Generate an endpoint URL with a random cursor
-const pickRandomCursor = (service) => {
-    const [cursorArray, setCursorArray] = useState();
-
-    // Set the cursorArray based on the service
-    switch (service) {
-        case 'hulu':
-            setCursorArray(HULU_CURSORS);
-        case 'netflix':
-            setCursorArray(HULU_CURSORS);
-        case 'hbo':
-            setCursorArray(HULU_CURSORS);
-        default:
-            setCursorArray(HULU_CURSORS);
-    }
-
-    // Pick a random cursor from the cursorArray
-    const randomCursor = Math.floor(Math.random() * cursorArray.length - 1);
-
-    // If the random cursor is 0, return the API URL without a cursor
-    if (randomCursor === 0) {
-        return `${API_BASE_URL}&services=${service}`;
-    }
-
-    // Otherwise, return the API URL with a random cursor
-    return `${API_BASE_URL}&services=${service}&cursor=${cursorArray[randomCursor]}`;
-};
-
-const useFetchMovie = async (service) => {
+const useFetchMovie = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [movie, setMovie] = useState(null);
+    let randomCursorUrl;
 
-    try {
+    const fetchMovie = async (service) => {
         setLoading(true);
 
-        // Fetch a list of movies from the API
-        const response = await fetch(pickRandomCursor(service), options);
-        const data = await response.json();
+        // Pick a random cursor from the cursorArray
+        const randomCursor = Math.floor(
+            Math.random() * HULU_CURSORS.length - 1
+        );
 
-        console.log(data);
+        // If the random cursor is 0, don't add a cursor to the URL. Otherwise, add cursor to the URL
+        if (randomCursor <= 0) {
+            randomCursorUrl = `${API_BASE_URL}&services=${service}`;
+        } else {
+            randomCursorUrl = `${API_BASE_URL}&services=${service}&cursor=${HULU_CURSORS[randomCursor]}`;
+        }
 
-        // Pick a random movie from the list
-        let randomMovie = data[Math.floor(Math.random() * data.length - 1)];
+        try {
+            // Fetch a list of movies from the API
+            const response = await fetch(randomCursorUrl, options);
+            const data = await response.json();
 
-        // Set movie title and description to state
-        setMovie({
-            title: randomMovie.title,
-            description: randomMovie.overview,
-        });
-    } catch (err) {
-        setError(err);
-    } finally {
-        setLoading(false);
-    }
+            console.log('DATA', data);
 
-    return { loading, error, movie };
+            // Pick a random movie from the list
+            const randomMovieIndex = Math.floor(
+                Math.random() * data.result.length
+            );
+
+            // Set random movie to state
+            setMovie(data.result[randomMovieIndex]);
+        } catch (err) {
+            setError(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return { loading, error, movie, fetchMovie };
 };
 
 export default useFetchMovie;
