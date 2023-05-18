@@ -26,14 +26,16 @@ const MovieModal = ({ isModalOpen, onClose, setIsModalOpen, movie, isLoading }) 
                             padding={4}
                             marginTop={10}
                         >
-                            <>
-                                <h1 className="text-lg font-bold">
-                                    {movie.title || 'no title'}
-                                </h1>
-                                <h2 className='text-white'>
-                                    {movie.overview || 'no description'}
-                                </h2>
-                            </>
+                            {movie && (
+                                <>
+                                    <h1 className="text-lg font-bold">
+                                        {movie.title}
+                                    </h1>
+                                    <h2 className='text-white'>
+                                        {movie.overview}
+                                    </h2>
+                                </>
+                            )}
                         </ModalBody>
 
                         <ModalFooter placeContent="center" paddingTop={10}>
