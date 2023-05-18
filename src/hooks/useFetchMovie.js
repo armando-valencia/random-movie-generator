@@ -21,6 +21,8 @@ const pickRandomCursor = (service) => {
             setCursorArray(HULU_CURSORS);
         case 'hbo':
             setCursorArray(HULU_CURSORS);
+        default:
+            setCursorArray(HULU_CURSORS);
     }
 
     // Pick a random cursor from the cursorArray
