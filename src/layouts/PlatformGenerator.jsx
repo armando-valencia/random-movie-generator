@@ -19,41 +19,43 @@ const PlatformGenerator = ({ page, service }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const { onOpen, onClose } = useDisclosure();
 
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const [data, setData] = useState(null);
-    const [newUrl, setNewUrl] = useState('');
-    const url = `${API_BASE_URL}&services=${service}`;
+    // const [loading, setLoading] = useState(false);
+    // const [error, setError] = useState(null);
+    // const [data, setData] = useState(null);
+    // const [newUrl, setNewUrl] = useState('');
+    // const url = `${API_BASE_URL}&services=${service}`;
+
+    const { loading, error, movie } = useFetchMovie(service);
 
     useEffect(() => {
-        fetchData();
+        // fetchData();
 
-        // useFetchMovie()
+        useFetchMovie(service);
     }, []);
 
-    const fetchData = async () => {
-        try {
-            setLoading(true);
-            const response = await fetch(newUrl ? newUrl : url, options);
-            const data = await response.json();
+    // const fetchData = async () => {
+    //     try {
+    //         setLoading(true);
+    //         const response = await fetch(newUrl ? newUrl : url, options);
+    //         const data = await response.json();
 
-            console.log(data);
+    //         console.log(data);
 
-            if (data.hasMore) {
-                setNewUrl(
-                    `${API_BASE_URL}&services=${service}&cursor=${data.nextCursor}`
-                );
-            } else {
-                setNewUrl(`${API_BASE_URL}&services=${service}`);
-            }
+    //         if (data.hasMore) {
+    //             setNewUrl(
+    //                 `${API_BASE_URL}&services=${service}&cursor=${data.nextCursor}`
+    //             );
+    //         } else {
+    //             setNewUrl(`${API_BASE_URL}&services=${service}`);
+    //         }
 
-            setData(data);
-        } catch (err) {
-            setError(err);
-        } finally {
-            setLoading(false);
-        }
-    };
+    //         setData(data);
+    //     } catch (err) {
+    //         setError(err);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
     if (loading) return <Spinner size="lg" />;
     if (error) return <p>Something went wrong. Please try again.</p>;
@@ -69,7 +71,7 @@ const PlatformGenerator = ({ page, service }) => {
                 <Button
                     variant="outlined"
                     colorScheme="brand"
-                    onClick={e => {
+                    onClick={(e) => {
                         setIsModalOpen(true);
                         fetchData();
                     }}
