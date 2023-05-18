@@ -5,6 +5,7 @@ import { API_BASE_URL } from '../util/constants';
 import { Button } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import { IoReturnUpBackSharp } from 'react-icons/io5';
+import useFetchMovie from '../hooks/useFetchMovie';
 
 const options = {
     method: 'GET',
@@ -26,6 +27,8 @@ const PlatformGenerator = ({ page, service }) => {
 
     useEffect(() => {
         fetchData();
+
+        // useFetchMovie()
     }, []);
 
     const fetchData = async () => {
