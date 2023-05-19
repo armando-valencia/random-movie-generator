@@ -19,9 +19,9 @@ const useFetchMovie = () => {
         setLoading(true);
 
         // Pick a random cursor from the cursorArray
-        const randomCursor = Math.floor(
-            Math.random() * HULU_CURSORS.length - 1
-        );
+        const randomCursor = Math.floor(Math.random() * HULU_CURSORS.length);
+
+        console.log('RANDOM CURSOR', randomCursor);
 
         // If the random cursor is 0, don't add a cursor to the URL. Otherwise, add cursor to the URL
         if (randomCursor <= 0) {
@@ -29,6 +29,8 @@ const useFetchMovie = () => {
         } else {
             randomCursorUrl = `${API_BASE_URL}&services=${service}&cursor=${HULU_CURSORS[randomCursor]}`;
         }
+
+        // console.log('RANDOM CURSOR URL', randomCursorUrl);
 
         try {
             // Fetch a list of movies from the API
@@ -41,6 +43,8 @@ const useFetchMovie = () => {
             const randomMovieIndex = Math.floor(
                 Math.random() * data.result.length
             );
+
+            console.log('RANDOM MOVIE INDEX', randomMovieIndex);
 
             // Set random movie to state
             setMovie(data.result[randomMovieIndex]);
