@@ -1,5 +1,5 @@
-import PlatformGenerator from '../layouts/PlatformGenerator';
+import Generator from '../layouts/Generator';
 
 export default function StreamingService({ name }) {
-    return <PlatformGenerator page={name} service={name.toLowerCase()} />;
+    return <Generator page={name} service={name.toLowerCase()} />;
 }
