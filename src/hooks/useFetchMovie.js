@@ -1,5 +1,10 @@
 import { useState } from 'react';
-import { API_BASE_URL, HULU_CURSORS } from '../util/constants';
+import {
+    API_BASE_URL,
+    HBO_MAX_CURSORS,
+    HULU_CURSORS,
+    NETFLIX_CURSORS,
+} from '../util/constants';
 
 const options = {
     method: 'GET',
@@ -16,10 +21,20 @@ const useFetchMovie = () => {
     let randomCursorUrl;
 
     const fetchMovie = async (service) => {
+        let cursorArray;
+
+        if (service === 'hulu') {
+            cursorArray = HULU_CURSORS;
+        } else if (service === 'netflix') {
+            cursorArray = NETFLIX_CURSORS;
+        } else if (service === 'hbo') {
+            cursorArray = HBO_MAX_CURSORS;
+        }
+
         setLoading(true);
 
         // Pick a random cursor from the cursorArray
-        const randomCursor = Math.floor(Math.random() * HULU_CURSORS.length);
+        const randomCursor = Math.floor(Math.random() * cursorArray.length);
 
         console.log('RANDOM CURSOR', randomCursor);
 
@@ -27,7 +42,7 @@ const useFetchMovie = () => {
         if (randomCursor <= 0) {
             randomCursorUrl = `${API_BASE_URL}&services=${service}`;
         } else {
-            randomCursorUrl = `${API_BASE_URL}&services=${service}&cursor=${HULU_CURSORS[randomCursor]}`;
+            randomCursorUrl = `${API_BASE_URL}&services=${service}&cursor=${cursorArray[randomCursor]}`;
         }
 
         // console.log('RANDOM CURSOR URL', randomCursorUrl);
