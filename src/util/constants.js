@@ -2,6 +2,7 @@ export const API_BASE_URL =
     'https://streaming-availability.p.rapidapi.com/v2/search/basic?country=us&output_language=en&show_type=movie&show_original_language=en';
 
 export const HBO_MAX_CURSORS = [
+    '',
     '27371:49th Parallel',
     '179542:9/11: Fifteen Years Later',
     "23356:A Dog's Life",
@@ -217,6 +218,7 @@ export const HBO_MAX_CURSORS = [
 ];
 
 export const HULU_CURSORS = [
+    '',
     '41431:13 Minutes',
     '260261:2022 Rock & Roll Hall of Fame Induction Ceremony',
     '2093826:2nd Chance',
@@ -628,6 +630,7 @@ export const HULU_CURSORS = [
 ];
 
 export const NETFLIX_CURSORS = [
+    '',
     '2549:6 Underground',
     '12793:A Boy Called Christmas',
     '27340:A Cinderella Story: Christmas Wish',
