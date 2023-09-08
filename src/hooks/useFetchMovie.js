@@ -1,10 +1,10 @@
 import { useState } from 'react';
+import { API_BASE_URL } from '../util/constants';
 import {
-    API_BASE_URL,
     HBO_MAX_CURSORS,
     HULU_CURSORS,
     NETFLIX_CURSORS,
-} from '../util/constants';
+} from '../util/cursors';
 
 const options = {
     method: 'GET',
