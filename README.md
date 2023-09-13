@@ -16,7 +16,8 @@ Want to watch a movie, but not sure what to watch? Quickly generate a movie on p
 4. Click close and repeat step 2 to generate another movie, or click the back arrow to select a different platform.
 
 ## Todo:
-
--   Genre filtering
--   Add more platforms
--   Bookmark movies
+- [ ] Genre filtering
+- [ ] Add more platforms
+- [ ] Bookmark movies
+- [ ] Create backend
+- [ ] Authentication
