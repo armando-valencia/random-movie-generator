@@ -7,13 +7,33 @@
         <title>Random Movie Generator</title>
     </head>
     <body>
-        <div
-            id="root"
-            class="bg-[#2a0054] bg-cover bg-opacity-25"
-            style="background-image: url('./src/assets/warped-bg.jpg')"
-        ></div>
+        <div id="root"></div>
         <script type="module" src="/src/index.jsx"></script>
+        <style>
+            body {
+                background: linear-gradient(
+                    -35deg,
+                    #10b7e1,
+                    #8716aa,
+                    #0f2eca,
+                    #b3ff00
+                );
+                background-size: 400% 400%;
+                animation: gradient 25s ease-in-out infinite;
+                height: 100vh;
+            }
+
+            @keyframes gradient {
+                0% {
+                    background-position: 0% 50%;
+                }
+                50% {
+                    background-position: 100% 50%;
+                }
+                100% {
+                    background-position: 0% 50%;
+                }
+            }
+        </style>
     </body>
 </html>
-
-<!-- class="bg-gradient-to-l from-[#C33764] to-[#1D2671]" -->
