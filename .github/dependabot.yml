@@ -1,0 +1,12 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+      time: "22:00"
+      timezone: "America/Chiacgo"
+    commit-message:
+      prefix: "[npm] "
+    target-branch: "development"
