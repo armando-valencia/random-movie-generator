@@ -5,7 +5,7 @@
 ![Chakra](https://img.shields.io/badge/chakra-%234ED1C5.svg?style=for-the-badge&logo=chakraui&logoColor=white) 
 ![Netlify](https://img.shields.io/badge/netlify-%23000000.svg?style=for-the-badge&logo=netlify&logoColor=#00C7B7)
 
-Want to watch a movie, but not sure what to watch? Quickly generate a movie on popular platforms like HBO Max, Hulu, and Netflix. Don’t like what you see? Generate another movie!
+Quickly generate a movie on popular platforms like HBO Max, Hulu, and Netflix. Don’t like what you see? Generate another movie!
 
 ## Todo:
 - [ ] Make animated CSS background
