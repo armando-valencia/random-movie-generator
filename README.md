@@ -7,17 +7,8 @@
 
 Want to watch a movie, but not sure what to watch? Quickly generate a movie on popular platforms like HBO Max, Hulu, and Netflix. Don’t like what you see? Generate another movie!
 
-
-## How to use it
-
-1. Select a platform.
-2. Click generate to fetch a movie.
-3. A movie is generated!
-4. Click close and repeat step 2 to generate another movie, or click the back arrow to select a different platform.
-
 ## Todo:
+- [ ] Make animated CSS background
 - [ ] Genre filtering
 - [ ] Add more platforms
 - [ ] Bookmark movies
-- [ ] Create backend
-- [ ] Authentication
