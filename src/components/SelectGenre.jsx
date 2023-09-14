@@ -41,16 +41,16 @@ const SelectGenre = ({ genreChanger, idChanger, genre }) => {
             <div className="p-2 m-2">
                 <Button
                     variant="custom"
-                    colorScheme={`${showGenres ? 'active' : 'brand'}`}
-                    onClick={e => setShowGenres(true)}
+                    colorScheme={showGenres ? 'active' : 'brand'}
+                    onClick={(e) => setShowGenres(true)}
                     className="m-1"
                 >
                     Yes
                 </Button>
                 <Button
                     variant="custom"
-                    colorScheme={`${showGenres ? 'brand' : 'active'}`}
-                    onClick={e => onClickNo()}
+                    colorScheme={showGenres ? 'brand' : 'active'}
+                    onClick={(e) => onClickNo()}
                     className="m-1"
                 >
                     No
@@ -70,7 +70,7 @@ const SelectGenre = ({ genreChanger, idChanger, genre }) => {
                         {genre !== null ? `Genre: ${genre}` : 'Select Genre'}
                     </MenuButton>
                     <MenuList bg="#2C3333">
-                        {genres.map(genre => (
+                        {genres.map((genre) => (
                             <MenuItem
                                 key={genre.genre}
                                 onClick={() => {
