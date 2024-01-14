@@ -8,7 +8,6 @@
 Quickly generate a movie on popular platforms like HBO Max, Hulu, and Netflix. Don’t like what you see? Generate another movie!
 
 ## Todo:
-- [X] Make animated CSS background
 - [ ] Genre filtering
 - [ ] Add more platforms
 - [ ] Bookmark movies
