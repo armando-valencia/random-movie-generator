@@ -68,7 +68,6 @@ export const HBO_MAX_CURSORS = [
     "2523:xXx"
 ]
 
-
 export const HULU_CURSORS = [
     '',
     '41431:13 Minutes',
