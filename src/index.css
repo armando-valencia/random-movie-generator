@@ -1,9 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Urbanist:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+    color-scheme: light;
+    --bg: #fff6e9;
+    --surface: #ffffff;
+    --surface-muted: #f3eee6;
+    --text: #050608;
+    --muted: #161a22;
+    --accent: #ff5a3c;
+    --accent-2: #0f766e;
+    --accent-3: #fbbf24;
+    --border: rgba(5, 6, 8, 0.12);
+    --glow-1: rgba(255, 115, 89, 0.22);
+    --glow-2: rgba(255, 199, 138, 0.18);
+    --glow-3: rgba(255, 227, 170, 0.22);
+    --blob-1: rgba(255, 102, 82, 0.16);
+    --blob-2: rgba(255, 210, 156, 0.18);
+    --blob-3: rgba(251, 191, 36, 0.16);
+}
+
+.dark {
+    color-scheme: dark;
+    --bg: #07090f;
+    --surface: #11111f;
+    --surface-muted: #17172b;
+    --text: #f4f4ff;
+    --muted: #9aa1b8;
+    --accent: #ff6b3d;
+    --accent-2: #7c3aed;
+    --accent-3: #22d3ee;
+    --border: rgba(244, 244, 255, 0.15);
+    --glow-1: rgba(124, 58, 237, 0.35);
+    --glow-2: rgba(14, 116, 144, 0.32);
+    --glow-3: rgba(255, 107, 61, 0.2);
+    --blob-1: rgba(124, 58, 237, 0.28);
+    --blob-2: rgba(14, 116, 144, 0.26);
+    --blob-3: rgba(255, 107, 61, 0.18);
+}
+
 html,
 body {
-    overflow: hidden;
-    background-color: #2a0054;
+    min-height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: 'Space Grotesk', 'Urbanist', sans-serif;
+    color: var(--text);
+    background-color: var(--bg);
+    background-image:
+        radial-gradient(circle at 12% 10%, var(--glow-1), transparent 55%),
+        radial-gradient(circle at 88% 12%, var(--glow-2), transparent 52%),
+        radial-gradient(circle at 70% 85%, var(--glow-3), transparent 58%),
+        linear-gradient(135deg, rgba(255, 248, 238, 0.98), rgba(255, 245, 232, 0.6));
+}
+
+.dark body {
+    background-color: var(--bg);
+    background-image:
+        radial-gradient(circle at 10% 12%, rgba(124, 58, 237, 0.4), transparent 55%),
+        radial-gradient(circle at 85% 8%, rgba(14, 116, 144, 0.38), transparent 52%),
+        radial-gradient(circle at 70% 85%, rgba(255, 107, 61, 0.25), transparent 58%),
+        linear-gradient(135deg, rgba(7, 9, 15, 0.98), rgba(10, 12, 20, 0.7));
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.25s ease-out both;
+}
+
+#root {
+    min-height: 100vh;
 }

@@ -1,22 +1,46 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Link } from 'react-router-dom';
 import Home from './pages/Home';
 import StreamingService from './pages/StreamingService';
+import ThemeToggle from './components/ThemeToggle';
 
 function App() {
     return (
-        <div className="flex justify-center items-center h-screen text-[#00ffff] bg-black/70">
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route
-                    path="/netflix"
-                    element={<StreamingService name="Netflix" />}
-                />
-                <Route
-                    path="/hulu"
-                    element={<StreamingService name="Hulu" />}
-                />
-                <Route path="/hbo" element={<StreamingService name="HBO" />} />
-            </Routes>
+        <div className="relative min-h-screen overflow-hidden">
+            <div className="pointer-events-none absolute -left-24 top-16 h-80 w-80 rounded-[40%] bg-[color:var(--blob-1)] blur-[120px]" />
+            <div className="pointer-events-none absolute right-[-6%] top-[-12%] h-72 w-72 rounded-[45%] bg-[color:var(--blob-2)] blur-[130px]" />
+            <div className="pointer-events-none absolute -right-6 bottom-[-12%] h-96 w-96 rounded-full bg-[color:var(--blob-3)] blur-[140px]" />
+
+            <div className="relative z-10 flex min-h-screen flex-col">
+                <header className="flex items-center justify-between px-6 py-5 md:px-10">
+                    <Link
+                        to="/"
+                        className="text-xs font-semibold uppercase tracking-[0.4em] text-[color:var(--muted)] transition hover:text-[color:var(--text)]"
+                    >
+                        Random Movie Generator
+                    </Link>
+                    <ThemeToggle />
+                </header>
+
+                <main className="flex-1 px-6 pb-12 md:px-10">
+                    <div className="mx-auto w-full max-w-5xl">
+                        <Routes>
+                            <Route path="/" element={<Home />} />
+                            <Route
+                                path="/netflix"
+                                element={<StreamingService name="Netflix" />}
+                            />
+                            <Route
+                                path="/hulu"
+                                element={<StreamingService name="Hulu" />}
+                            />
+                            <Route
+                                path="/hbo"
+                                element={<StreamingService name="HBO" />}
+                            />
+                        </Routes>
+                    </div>
+                </main>
+            </div>
         </div>
     );
 }
