@@ -27,8 +27,6 @@ dist-ssr
 *.sw?
 deno.lock
 
-
-/agents
 /archive
 
 # Local Netlify folder
