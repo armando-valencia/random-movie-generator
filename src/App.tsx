@@ -3,10 +3,12 @@ import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import Home from './pages/Home';
 import StreamingService from './pages/StreamingService';
 import ThemeToggle from './components/ThemeToggle';
+import { SERVICES, SERVICE_LABELS, isStreamingService } from './util/constants';
+import type { StreamingService as StreamingServiceSlug } from './types/movie';
 
-const getServiceFromPath = (pathname) => {
+const getServiceFromPath = (pathname: string): StreamingServiceSlug | null => {
     const segment = pathname.split('/')[1];
-    if (segment === 'netflix' || segment === 'hulu' || segment === 'hbo') {
+    if (segment && isStreamingService(segment)) {
         return segment;
     }
     return null;
@@ -50,16 +52,31 @@ function App() {
                         <Routes>
                             <Route path="/" element={<Home />} />
                             <Route
-                                path="/netflix"
-                                element={<StreamingService name="Netflix" />}
+                                path={`/${SERVICES.netflix}`}
+                                element={
+                                    <StreamingService
+                                        service={SERVICES.netflix}
+                                        label={SERVICE_LABELS[SERVICES.netflix]}
+                                    />
+                                }
                             />
                             <Route
-                                path="/hulu"
-                                element={<StreamingService name="Hulu" />}
+                                path={`/${SERVICES.hulu}`}
+                                element={
+                                    <StreamingService
+                                        service={SERVICES.hulu}
+                                        label={SERVICE_LABELS[SERVICES.hulu]}
+                                    />
+                                }
                             />
                             <Route
-                                path="/hbo"
-                                element={<StreamingService name="HBO" />}
+                                path={`/${SERVICES.hbo}`}
+                                element={
+                                    <StreamingService
+                                        service={SERVICES.hbo}
+                                        label={SERVICE_LABELS[SERVICES.hbo]}
+                                    />
+                                }
                             />
                         </Routes>
                     </div>

@@ -1,12 +1,18 @@
 import { useRef, useState } from 'react';
 import { API_PROXY_BASE_URL } from '../util/constants';
+import type { Movie, StreamingService } from '../types/movie';
+
+type FetchMovieResponse = {
+    result?: Movie[];
+};
+
 const useFetchMovie = () => {
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const [movie, setMovie] = useState(null);
-    const lastMovieIdRef = useRef(null);
+    const [error, setError] = useState<Error | null>(null);
+    const [movie, setMovie] = useState<Movie | null>(null);
+    const lastMovieIdRef = useRef<string | null>(null);
 
-    const getRandomIndex = (max) => {
+    const getRandomIndex = (max: number) => {
         if (max <= 1) return 0;
         if (typeof window !== 'undefined' && window.crypto?.getRandomValues) {
             const array = new Uint32Array(1);
@@ -16,7 +22,7 @@ const useFetchMovie = () => {
         return Math.floor(Math.random() * max);
     };
 
-    const pickRandomMovie = (items) => {
+    const pickRandomMovie = (items: Movie[]) => {
         if (!items.length) return null;
         if (items.length === 1) return items[0];
         let index = getRandomIndex(items.length);
@@ -28,18 +34,20 @@ const useFetchMovie = () => {
         return candidate;
     };
 
-    const fetchMovie = async (service) => {
+    const fetchMovie = async (service: StreamingService) => {
         setError(null);
         setLoading(true);
         const randomCursorUrl = `${API_PROXY_BASE_URL}?service=${service}`;
 
         try {
             // Fetch a list of movies from the API
-            const response = await fetch(randomCursorUrl, { cache: 'no-store' });
+            const response = await fetch(randomCursorUrl, {
+                cache: 'no-store',
+            });
             if (!response.ok) {
                 throw new Error('Request failed.');
             }
-            const data = await response.json();
+            const data: FetchMovieResponse = await response.json();
             if (!Array.isArray(data?.result) || data.result.length === 0) {
                 throw new Error('No results.');
             }
@@ -53,7 +61,7 @@ const useFetchMovie = () => {
             setMovie(selected);
         } catch (err) {
             setMovie(null);
-            setError(err);
+            setError(err instanceof Error ? err : new Error('Unknown error.'));
         } finally {
             setLoading(false);
         }

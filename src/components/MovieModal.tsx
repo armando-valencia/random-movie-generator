@@ -1,4 +1,18 @@
 import { useEffect } from 'react';
+import type {
+    Movie,
+    StreamingInfoEntry,
+    StreamingService,
+} from '../types/movie';
+
+type MovieModalProps = {
+    isOpen: boolean;
+    onClose: () => void;
+    onNext: () => void;
+    movie: Movie | null;
+    isLoading: boolean;
+    service: StreamingService;
+};
 
 const MovieModal = ({
     isOpen,
@@ -7,12 +21,12 @@ const MovieModal = ({
     movie,
     isLoading,
     service,
-}) => {
+}: MovieModalProps) => {
     useEffect(() => {
         if (!isOpen) {
             return undefined;
         }
-        const handleKey = event => {
+        const handleKey = (event: KeyboardEvent) => {
             if (event.key === 'Escape') {
                 onClose();
             }
@@ -26,7 +40,10 @@ const MovieModal = ({
     }
 
     const streamingInfo = movie?.streamingInfo?.us || {};
-    const streamingEntries = Object.entries(streamingInfo);
+    const streamingEntries = Object.entries(streamingInfo) as [
+        string,
+        StreamingInfoEntry[]
+    ][];
     const primaryService = streamingInfo?.[service]?.[0];
     const fallbackService = streamingEntries[0]?.[1]?.[0];
     const watchLink =
@@ -37,8 +54,7 @@ const MovieModal = ({
         '';
     const serviceLabel = service ? service.toUpperCase() : 'Service';
     const runtimeLabel = movie?.runtime ? `${movie.runtime} min` : 'Runtime —';
-    const imdbLabel =
-        movie?.imdbRating !== undefined ? movie.imdbRating : '—';
+    const imdbLabel = movie?.imdbRating !== undefined ? movie.imdbRating : '—';
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -96,7 +112,7 @@ const MovieModal = ({
                             </p>
                             {movie.genres?.length ? (
                                 <div className="flex flex-wrap gap-2">
-                                    {movie.genres.map(genre => (
+                                    {movie.genres.map((genre) => (
                                         <span
                                             key={genre.id}
                                             className="rounded-full border border-[color:var(--border)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--muted)]"
@@ -112,14 +128,16 @@ const MovieModal = ({
                                         Streaming on
                                     </p>
                                     <div className="mt-2 flex flex-wrap gap-2">
-                                        {streamingEntries.map(([serviceName]) => (
-                                            <span
-                                                key={serviceName}
-                                                className="rounded-full bg-[color:var(--surface-muted)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--text)]"
-                                            >
-                                                {serviceName}
-                                            </span>
-                                        ))}
+                                        {streamingEntries.map(
+                                            ([serviceName]) => (
+                                                <span
+                                                    key={serviceName}
+                                                    className="rounded-full bg-[color:var(--surface-muted)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--text)]"
+                                                >
+                                                    {serviceName}
+                                                </span>
+                                            )
+                                        )}
                                     </div>
                                 </div>
                             ) : null}
