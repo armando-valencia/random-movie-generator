@@ -1,7 +1,7 @@
 export type { StreamingService } from '../util/constants';
 
 export type Genre = {
-    id: number;
+    id: string | number;
     name: string;
 };
 

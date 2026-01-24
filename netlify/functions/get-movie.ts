@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 const API_BASE_URL =
-    'https://streaming-availability.p.rapidapi.com/v2/search/basic?country=us&output_language=en&show_type=movie&show_original_language=en';
+    'https://streaming-availability.p.rapidapi.com/shows/search/filters';
 
 const SERVICES = {
     netflix: 'netflix',
@@ -34,6 +34,109 @@ type HandlerResponse = {
 const isStreamingService = (value: string): value is StreamingService =>
     ALLOWED_SERVICES.has(value as StreamingService);
 
+type V4ImageSet = {
+    verticalPoster?: Record<string, string>;
+    horizontalBackdrop?: Record<string, string>;
+};
+
+type V4Genre = {
+    id: string;
+    name: string;
+};
+
+type V4StreamingOption = {
+    service?: {
+        id?: string;
+        name?: string;
+    };
+    link?: string;
+    videoLink?: string;
+};
+
+type V4Show = {
+    title: string;
+    overview?: string;
+    releaseYear?: number;
+    imdbId?: string;
+    tmdbId?: string;
+    rating?: number;
+    imageSet?: V4ImageSet;
+    genres?: V4Genre[];
+    streamingOptions?: {
+        us?: V4StreamingOption[];
+    };
+};
+
+type V4Response = {
+    shows?: V4Show[];
+};
+
+type NormalizedShow = {
+    title: string;
+    overview?: string;
+    year?: number;
+    imdbId?: string;
+    tmdbId?: string;
+    imdbRating?: number;
+    posterURLs?: Record<string, string>;
+    backdropURLs?: Record<string, string>;
+    genres?: V4Genre[];
+    streamingInfo?: {
+        us?: Record<string, { link?: string; watchLink?: string }[]>;
+    };
+};
+
+const normalizeShows = (
+    payload: V4Response,
+    service: StreamingService
+): NormalizedShow[] => {
+    const shows = payload.shows || [];
+    return shows.flatMap(show => {
+        const posterUrl =
+            show.imageSet?.verticalPoster?.w360 ||
+            show.imageSet?.verticalPoster?.w480 ||
+            show.imageSet?.verticalPoster?.w240 ||
+            '';
+        const backdropUrl =
+            show.imageSet?.horizontalBackdrop?.w720 ||
+            show.imageSet?.horizontalBackdrop?.w1080 ||
+            show.imageSet?.horizontalBackdrop?.w480 ||
+            '';
+        const streamOptions = show.streamingOptions?.us || [];
+        const matchingOptions = streamOptions.filter(
+            option => option.service?.id === service
+        );
+        if (!matchingOptions.length) {
+            return [];
+        }
+        const streamingInfo = {
+            us: {
+                [service]: matchingOptions.map(option => ({
+                    link: option.link,
+                    watchLink: option.videoLink,
+                })),
+            },
+        };
+        const imdbRating =
+            typeof show.rating === 'number' ? show.rating / 10 : undefined;
+
+        return [
+            {
+                title: show.title,
+                overview: show.overview,
+                year: show.releaseYear,
+                imdbId: show.imdbId,
+                tmdbId: show.tmdbId,
+                imdbRating,
+                posterURLs: posterUrl ? { '342': posterUrl } : undefined,
+                backdropURLs: backdropUrl ? { '780': backdropUrl } : undefined,
+                genres: show.genres,
+                streamingInfo,
+            },
+        ];
+    });
+};
+
 async function loadCursorServices(): Promise<CursorServices | null> {
     const localPath = path.resolve(process.cwd(), 'public/data/cursors.json');
     try {
@@ -60,9 +163,9 @@ async function loadCursorServices(): Promise<CursorServices | null> {
 }
 
 export async function handler(event: HandlerEvent): Promise<HandlerResponse> {
-    const { RAPIDAPI_KEY, RAPIDAPI_HOST } = process.env;
+    const { V4RAPIDAPI_KEY, RAPIDAPI_HOST } = process.env;
 
-    if (!RAPIDAPI_KEY || !RAPIDAPI_HOST) {
+    if (!V4RAPIDAPI_KEY || !RAPIDAPI_HOST) {
         return {
             statusCode: 500,
             headers: { 'content-type': 'application/json' },
@@ -83,27 +186,35 @@ export async function handler(event: HandlerEvent): Promise<HandlerResponse> {
     }
 
     const service = serviceParam;
-    const cursorServices = await loadCursorServices();
-    const cursorList = cursorServices?.[service] || DEFAULT_CURSORS[service];
-    const randomIndex = Math.floor(Math.random() * cursorList.length);
-    const selectedCursor = cursorParam || cursorList[randomIndex] || '';
-
-    const url = selectedCursor
-        ? `${API_BASE_URL}&services=${service}&cursor=${encodeURIComponent(
-              selectedCursor
-          )}`
-        : `${API_BASE_URL}&services=${service}`;
+    const queryString =
+        `country=us&series_granularity=show&order_direction=asc&order_by=original_title&genres_relation=and&output_language=en&show_type=movie&show_original_language=en&catalogs=${encodeURIComponent(
+            service
+        )}`;
+    const url = `${API_BASE_URL}?${queryString}`;
 
     try {
         const response = await fetch(url, {
             method: 'GET',
             headers: {
-                'X-RapidAPI-Key': RAPIDAPI_KEY,
+                'X-RapidAPI-Key': V4RAPIDAPI_KEY,
                 'X-RapidAPI-Host': RAPIDAPI_HOST,
             },
         });
 
-        const data = await response.json();
+        if (!response.ok) {
+            const errorText = await response.text();
+            return {
+                statusCode: response.status,
+                headers: { 'content-type': 'application/json' },
+                body: JSON.stringify({
+                    error: 'Upstream request failed.',
+                    details: errorText,
+                }),
+            };
+        }
+
+        const data: V4Response = await response.json();
+        const normalized = normalizeShows(data, service);
 
         return {
             statusCode: response.status,
@@ -111,7 +222,7 @@ export async function handler(event: HandlerEvent): Promise<HandlerResponse> {
                 'content-type': 'application/json',
                 'cache-control': 'public, max-age=86400, s-maxage=86400',
             },
-            body: JSON.stringify(data),
+            body: JSON.stringify({ result: normalized }),
         };
     } catch (error) {
         return {

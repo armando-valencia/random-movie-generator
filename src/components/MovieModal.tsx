@@ -53,8 +53,7 @@ const MovieModal = ({
         fallbackService?.link ||
         '';
     const serviceLabel = service ? service.toUpperCase() : 'Service';
-    const runtimeLabel = movie?.runtime ? `${movie.runtime} min` : 'Runtime —';
-    const imdbLabel = movie?.imdbRating !== undefined ? movie.imdbRating : '—';
+    const imdbLabel = movie?.imdbRating !== undefined ? movie.imdbRating : '-';
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -103,8 +102,7 @@ const MovieModal = ({
                                     {movie.title}
                                 </h2>
                                 <p className="mt-2 text-sm text-[color:var(--muted)]">
-                                    {movie.year} · {runtimeLabel} · IMDb{' '}
-                                    {imdbLabel}
+                                    {movie.year} - IMDb {imdbLabel}
                                 </p>
                             </div>
                             <p className="text-sm leading-relaxed text-[color:var(--muted)]">
@@ -180,3 +178,4 @@ const MovieModal = ({
 };
 
 export default MovieModal;
+
