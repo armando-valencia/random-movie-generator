@@ -163,9 +163,9 @@ async function loadCursorServices(): Promise<CursorServices | null> {
 }
 
 export async function handler(event: HandlerEvent): Promise<HandlerResponse> {
-    const { V4RAPIDAPI_KEY, RAPIDAPI_HOST } = process.env;
+    const { RAPIDAPI_KEY, RAPIDAPI_HOST } = process.env;
 
-    if (!V4RAPIDAPI_KEY || !RAPIDAPI_HOST) {
+    if (!RAPIDAPI_KEY || !RAPIDAPI_HOST) {
         return {
             statusCode: 500,
             headers: { 'content-type': 'application/json' },
@@ -196,7 +196,7 @@ export async function handler(event: HandlerEvent): Promise<HandlerResponse> {
         const response = await fetch(url, {
             method: 'GET',
             headers: {
-                'X-RapidAPI-Key': V4RAPIDAPI_KEY,
+                'X-RapidAPI-Key': RAPIDAPI_KEY,
                 'X-RapidAPI-Host': RAPIDAPI_HOST,
             },
         });

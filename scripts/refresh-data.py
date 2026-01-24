@@ -88,11 +88,11 @@ def refresh_service(service, headers, max_pages):
 
 
 def main():
-    rapidapi_key = os.getenv("V4RAPIDAPI_KEY")
+    rapidapi_key = os.getenv("RAPIDAPI_KEY")
     rapidapi_host = os.getenv("RAPIDAPI_HOST")
 
     if not rapidapi_key or not rapidapi_host:
-        print("Missing V4RAPIDAPI_KEY or RAPIDAPI_HOST.")
+        print("Missing RAPIDAPI_KEY or RAPIDAPI_HOST.")
         return 1
 
     max_pages = read_max_pages()
