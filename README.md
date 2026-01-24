@@ -7,6 +7,35 @@
 
 Quickly generate a movie on popular platforms like HBO Max, Hulu, and Netflix. Don’t like what you see? Generate another movie!
 
+## Local Development
+
+Prereqs:
+
+- Node.js + npm
+- Netlify CLI (required for local Functions)
+  - Homebrew: `brew install netlify-cli`
+  - npm: `npm install -g netlify-cli`
+
+Setup:
+
+```bash
+npm install
+cp .env.example .env.local
+```
+
+Populate `.env.local` with your RapidAPI credentials (required if you want data to be fetched):
+
+- `RAPIDAPI_KEY`
+- `RAPIDAPI_HOST`
+
+Run the app (includes the Functions proxy):
+
+```bash
+netlify dev
+```
+
+Open the local site at `http://localhost:8888`.
+
 ## Todo:
 - [ ] Genre filtering
 - [ ] Add more platforms
