@@ -41,7 +41,9 @@ const useFetchMovie = () => {
 
         try {
             // Fetch a list of movies from the API
-            const response = await fetch(randomCursorUrl, { cache: 'no-store' });
+            const response = await fetch(randomCursorUrl, {
+                cache: 'no-store',
+            });
             if (!response.ok) {
                 throw new Error('Request failed.');
             }

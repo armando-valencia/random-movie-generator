@@ -72,9 +72,9 @@ const SelectGenre = ({ genreChanger, idChanger, genre }: SelectGenreProps) => {
                         {genre ? `Genre: ${genre}` : 'Select Genre'}
                         <select
                             value={genre || ''}
-                            onChange={event => {
+                            onChange={(event) => {
                                 const selected = genres.find(
-                                    item => item.genre === event.target.value
+                                    (item) => item.genre === event.target.value
                                 );
                                 if (selected) {
                                     genreChanger(selected.genre);
@@ -84,7 +84,7 @@ const SelectGenre = ({ genreChanger, idChanger, genre }: SelectGenreProps) => {
                             className="mt-2 w-full rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-muted)] px-3 py-2 text-sm text-[color:var(--text)]"
                         >
                             <option value="">Choose</option>
-                            {genres.map(option => (
+                            {genres.map((option) => (
                                 <option key={option.id} value={option.genre}>
                                     {option.genre}
                                 </option>

@@ -3,16 +3,10 @@ import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import Home from './pages/Home';
 import StreamingService from './pages/StreamingService';
 import ThemeToggle from './components/ThemeToggle';
-import {
-    SERVICES,
-    SERVICE_LABELS,
-    isStreamingService,
-} from './util/constants';
+import { SERVICES, SERVICE_LABELS, isStreamingService } from './util/constants';
 import type { StreamingService as StreamingServiceSlug } from './types/movie';
 
-const getServiceFromPath = (
-    pathname: string
-): StreamingServiceSlug | null => {
+const getServiceFromPath = (pathname: string): StreamingServiceSlug | null => {
     const segment = pathname.split('/')[1];
     if (segment && isStreamingService(segment)) {
         return segment;

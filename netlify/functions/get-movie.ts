@@ -31,6 +31,9 @@ type HandlerResponse = {
     body: string;
 };
 
+const isStreamingService = (value: string): value is StreamingService =>
+    ALLOWED_SERVICES.has(value as StreamingService);
+
 async function loadCursorServices(): Promise<CursorServices | null> {
     const localPath = path.resolve(process.cwd(), 'public/data/cursors.json');
     try {
@@ -38,8 +41,7 @@ async function loadCursorServices(): Promise<CursorServices | null> {
         const payload: { services?: CursorServices } = JSON.parse(raw);
         return payload.services || null;
     } catch (error) {
-        const baseUrl =
-            process.env.URL || process.env.DEPLOY_PRIME_URL || null;
+        const baseUrl = process.env.URL || process.env.DEPLOY_PRIME_URL || null;
         if (!baseUrl) {
             return null;
         }
@@ -48,7 +50,8 @@ async function loadCursorServices(): Promise<CursorServices | null> {
             if (!response.ok) {
                 return null;
             }
-            const payload: { services?: CursorServices } = await response.json();
+            const payload: { services?: CursorServices } =
+                await response.json();
             return payload.services || null;
         } catch (fetchError) {
             return null;
@@ -68,10 +71,10 @@ export async function handler(event: HandlerEvent): Promise<HandlerResponse> {
     }
 
     const params = event.queryStringParameters || {};
-    const service = params.service && params.service.toLowerCase();
+    const serviceParam = params.service && params.service.toLowerCase();
     const cursorParam = params.cursor || '';
 
-    if (!service || !ALLOWED_SERVICES.has(service)) {
+    if (!serviceParam || !isStreamingService(serviceParam)) {
         return {
             statusCode: 400,
             headers: { 'content-type': 'application/json' },
@@ -79,13 +82,16 @@ export async function handler(event: HandlerEvent): Promise<HandlerResponse> {
         };
     }
 
+    const service = serviceParam;
     const cursorServices = await loadCursorServices();
     const cursorList = cursorServices?.[service] || DEFAULT_CURSORS[service];
     const randomIndex = Math.floor(Math.random() * cursorList.length);
     const selectedCursor = cursorParam || cursorList[randomIndex] || '';
 
     const url = selectedCursor
-        ? `${API_BASE_URL}&services=${service}&cursor=${encodeURIComponent(selectedCursor)}`
+        ? `${API_BASE_URL}&services=${service}&cursor=${encodeURIComponent(
+              selectedCursor
+          )}`
         : `${API_BASE_URL}&services=${service}`;
 
     try {
