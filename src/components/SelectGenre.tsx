@@ -1,6 +1,11 @@
 import { useState } from 'react';
 
-const genres = [
+type GenreOption = {
+    id: number;
+    genre: string;
+};
+
+const genres: GenreOption[] = [
     // { id: 1, genre: 'Biography' },
     // { id: 2, genre: 'Film Noir' },
     // { id: 3, genre: 'Game Show' },
@@ -24,8 +29,14 @@ const genres = [
     { id: 9648, genre: 'Mystery' },
 ];
 
-const SelectGenre = ({ genreChanger, idChanger, genre }) => {
-    const [showGenres, setShowGenres] = useState(null);
+type SelectGenreProps = {
+    genreChanger: (genre: string | null) => void;
+    idChanger: (id: number | null) => void;
+    genre: string | null;
+};
+
+const SelectGenre = ({ genreChanger, idChanger, genre }: SelectGenreProps) => {
+    const [showGenres, setShowGenres] = useState<boolean | null>(null);
 
     const onClickNo = () => {
         setShowGenres(false);

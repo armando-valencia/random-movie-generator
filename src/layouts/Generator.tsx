@@ -2,8 +2,14 @@ import { useState } from 'react';
 import MovieModal from '../components/MovieModal';
 import BackButton from '../components/BackButton';
 import useFetchMovie from '../hooks/useFetchMovie';
+import type { StreamingService } from '../types/movie';
 
-const Generator = ({ page, service }) => {
+type GeneratorProps = {
+    page: string;
+    service: StreamingService;
+};
+
+const Generator = ({ page, service }: GeneratorProps) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const { loading, error, movie, fetchMovie } = useFetchMovie();

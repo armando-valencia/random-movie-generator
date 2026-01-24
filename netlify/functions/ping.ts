@@ -1,4 +1,10 @@
-export async function handler() {
+type HandlerResponse = {
+    statusCode: number;
+    headers: Record<string, string>;
+    body: string;
+};
+
+export async function handler(): Promise<HandlerResponse> {
     return {
         statusCode: 200,
         headers: {

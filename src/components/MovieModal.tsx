@@ -1,4 +1,18 @@
 import { useEffect } from 'react';
+import type {
+    Movie,
+    StreamingInfoEntry,
+    StreamingService,
+} from '../types/movie';
+
+type MovieModalProps = {
+    isOpen: boolean;
+    onClose: () => void;
+    onNext: () => void;
+    movie: Movie | null;
+    isLoading: boolean;
+    service: StreamingService;
+};
 
 const MovieModal = ({
     isOpen,
@@ -7,12 +21,12 @@ const MovieModal = ({
     movie,
     isLoading,
     service,
-}) => {
+}: MovieModalProps) => {
     useEffect(() => {
         if (!isOpen) {
             return undefined;
         }
-        const handleKey = event => {
+        const handleKey = (event: KeyboardEvent) => {
             if (event.key === 'Escape') {
                 onClose();
             }
@@ -26,7 +40,9 @@ const MovieModal = ({
     }
 
     const streamingInfo = movie?.streamingInfo?.us || {};
-    const streamingEntries = Object.entries(streamingInfo);
+    const streamingEntries = Object.entries(
+        streamingInfo
+    ) as [string, StreamingInfoEntry[]][];
     const primaryService = streamingInfo?.[service]?.[0];
     const fallbackService = streamingEntries[0]?.[1]?.[0];
     const watchLink =

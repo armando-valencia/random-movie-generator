@@ -4,18 +4,38 @@ import path from 'node:path';
 const API_BASE_URL =
     'https://streaming-availability.p.rapidapi.com/v2/search/basic?country=us&output_language=en&show_type=movie&show_original_language=en';
 
-const ALLOWED_SERVICES = new Set(['netflix', 'hulu', 'hbo']);
-const DEFAULT_CURSORS = {
-    netflix: [''],
-    hulu: [''],
-    hbo: [''],
+const SERVICES = {
+    netflix: 'netflix',
+    hulu: 'hulu',
+    hbo: 'hbo',
+} as const;
+
+type StreamingService = (typeof SERVICES)[keyof typeof SERVICES];
+
+const ALLOWED_SERVICES = new Set(Object.values(SERVICES));
+const DEFAULT_CURSORS: Record<StreamingService, string[]> = {
+    [SERVICES.netflix]: [''],
+    [SERVICES.hulu]: [''],
+    [SERVICES.hbo]: [''],
 };
 
-async function loadCursorServices() {
+type CursorServices = Record<string, string[]>;
+
+type HandlerEvent = {
+    queryStringParameters?: Record<string, string | undefined> | null;
+};
+
+type HandlerResponse = {
+    statusCode: number;
+    headers: Record<string, string>;
+    body: string;
+};
+
+async function loadCursorServices(): Promise<CursorServices | null> {
     const localPath = path.resolve(process.cwd(), 'public/data/cursors.json');
     try {
         const raw = await fs.readFile(localPath, 'utf8');
-        const payload = JSON.parse(raw);
+        const payload: { services?: CursorServices } = JSON.parse(raw);
         return payload.services || null;
     } catch (error) {
         const baseUrl =
@@ -28,7 +48,7 @@ async function loadCursorServices() {
             if (!response.ok) {
                 return null;
             }
-            const payload = await response.json();
+            const payload: { services?: CursorServices } = await response.json();
             return payload.services || null;
         } catch (fetchError) {
             return null;
@@ -36,7 +56,7 @@ async function loadCursorServices() {
     }
 }
 
-export async function handler(event) {
+export async function handler(event: HandlerEvent): Promise<HandlerResponse> {
     const { RAPIDAPI_KEY, RAPIDAPI_HOST } = process.env;
 
     if (!RAPIDAPI_KEY || !RAPIDAPI_HOST) {
