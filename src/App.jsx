@@ -1,9 +1,33 @@
-import { Routes, Route, Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import Home from './pages/Home';
 import StreamingService from './pages/StreamingService';
 import ThemeToggle from './components/ThemeToggle';
 
+const getServiceFromPath = (pathname) => {
+    const segment = pathname.split('/')[1];
+    if (segment === 'netflix' || segment === 'hulu' || segment === 'hbo') {
+        return segment;
+    }
+    return null;
+};
+
 function App() {
+    const location = useLocation();
+
+    useEffect(() => {
+        const service = getServiceFromPath(location.pathname);
+        const root = document.documentElement;
+        const body = document.body;
+        if (service) {
+            root.dataset.service = service;
+            body.dataset.service = service;
+        } else {
+            root.removeAttribute('data-service');
+            body.removeAttribute('data-service');
+        }
+    }, [location.pathname]);
+
     return (
         <div className="relative min-h-screen overflow-hidden">
             <div className="pointer-events-none absolute -left-24 top-16 h-80 w-80 rounded-[40%] bg-[color:var(--blob-1)] blur-[120px]" />
