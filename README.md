@@ -1,8 +1,7 @@
 # Random Movie Generator
 
-![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB) 
-![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white) 
-![Chakra](https://img.shields.io/badge/chakra-%234ED1C5.svg?style=for-the-badge&logo=chakraui&logoColor=white) 
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
 ![Netlify](https://img.shields.io/badge/netlify-%23000000.svg?style=for-the-badge&logo=netlify&logoColor=#00C7B7)
 
 Quickly generate a movie on popular platforms like HBO Max, Hulu, and Netflix. Don’t like what you see? Generate another movie!
@@ -11,10 +10,10 @@ Quickly generate a movie on popular platforms like HBO Max, Hulu, and Netflix. D
 
 Prereqs:
 
-- Node.js + npm
-- Netlify CLI (required for local Functions)
-  - Homebrew: `brew install netlify-cli`
-  - npm: `npm install -g netlify-cli`
+-   Node.js + npm
+-   Netlify CLI (required for local Functions)
+    -   Homebrew: `brew install netlify-cli`
+    -   npm: `npm install -g netlify-cli`
 
 Setup:
 
@@ -25,8 +24,8 @@ cp .env.example .env.local
 
 Populate `.env.local` with your RapidAPI credentials (required if you want data to be fetched):
 
-- `RAPIDAPI_KEY`
-- `RAPIDAPI_HOST`
+-   `RAPIDAPI_KEY`
+-   `RAPIDAPI_HOST`
 
 Run the app (includes the Functions proxy):
 
@@ -37,16 +36,17 @@ netlify dev
 Open the local site at `http://localhost:8888`.
 
 ## Todo:
-- [ ] Genre filtering
-- [ ] Add more platforms
-- [ ] Bookmark movies
+
+-   [ ] Genre filtering
+-   [ ] Add more platforms
+-   [ ] Bookmark movies
 
 ## Environment Variables
 
-Serverless proxy requires these (set in Netlify and/or local `.env`):
+Serverless proxy requires these (set in `.env.local`):
 
-- `RAPIDAPI_KEY`
-- `RAPIDAPI_HOST`
+-   `RAPIDAPI_KEY`
+-   `RAPIDAPI_HOST`
 
 ## Netlify Functions (Local)
 
@@ -73,15 +73,8 @@ netlify dev
 Then in another terminal:
 
 ```bash
-curl "http://localhost:8888/.netlify/functions/ping"
 curl "http://localhost:8888/api/get-movie?service=netflix"
 ```
-
-## Verify RapidAPI Key Is Not Exposed
-
-- Confirm the client no longer references `import.meta.env.VITE_API_*`.
-- Build and search the output: `rg -n "RAPIDAPI|rapidapi|VITE_API" dist`.
-- Verify API calls go to `/api/get-movie` instead of RapidAPI directly.
 
 ## Monthly Cursor Refresh
 
@@ -95,4 +88,4 @@ RAPIDAPI_KEY=... RAPIDAPI_HOST=... python scripts/refresh-data.py
 
 Manual run (GitHub Actions):
 
-- Use the workflow dispatch input `max_pages` to cap pages per service.
+-   Use the workflow dispatch input `max_pages` to cap pages per service.
