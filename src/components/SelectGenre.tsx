@@ -1,99 +1,112 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 type GenreOption = {
-    id: number;
-    genre: string;
+    id: string;
+    name: string;
 };
 
-const genres: GenreOption[] = [
-    // { id: 1, genre: 'Biography' },
-    // { id: 2, genre: 'Film Noir' },
-    // { id: 3, genre: 'Game Show' },
-    // { id: 4, genre: 'Musical' },
-    // { id: 5, genre: 'Sport' },
-    // { id: 6, genre: 'Short' },
-    // { id: 7, genre: 'Adult' },
-    { id: 12, genre: 'Adventure' },
-    // { id: 14, genre: 'Fantasy' },
-    // { id: 16, genre: 'Animation' },
-    { id: 18, genre: 'Drama' },
-    { id: 27, genre: 'Horror' },
-    { id: 28, genre: 'Action' },
-    // { id: 35, genre: 'Comedy' },
-    // { id: 36, genre: 'History' },
-    // { id: 37, genre: 'Western' },
-    // { id: 53, genre: 'Thriller' },
-    // { id: 80, genre: 'Crime' },
-    // { id: 99, genre: 'Documentary' },
-    { id: 878, genre: 'Science Fiction' },
-    { id: 9648, genre: 'Mystery' },
-];
+type GenresPayload = {
+    genres?: GenreOption[];
+};
 
 type SelectGenreProps = {
-    genreChanger: (genre: string | null) => void;
-    idChanger: (id: number | null) => void;
-    genre: string | null;
+    selectedGenreId: string | null;
+    onChange: (genreId: string | null) => void;
 };
 
-const SelectGenre = ({ genreChanger, idChanger, genre }: SelectGenreProps) => {
-    const [showGenres, setShowGenres] = useState<boolean | null>(null);
+const SelectGenre = ({ selectedGenreId, onChange }: SelectGenreProps) => {
+    const showGenres = true;
+    const [genres, setGenres] = useState<GenreOption[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    const onClickNo = () => {
-        setShowGenres(false);
-        genreChanger(null);
-        idChanger(null);
+    useEffect(() => {
+        let isMounted = true;
+        setIsLoading(true);
+        setError(null);
+
+        fetch('/data/genres.json', { cache: 'no-store' })
+            .then(async (response) => {
+                if (!response.ok) {
+                    throw new Error('Request failed.');
+                }
+                const data: GenresPayload | GenreOption[] =
+                    await response.json();
+                const list = Array.isArray(data) ? data : data.genres;
+                if (!Array.isArray(list)) {
+                    throw new Error('Invalid response.');
+                }
+                if (isMounted) {
+                    const sorted = [...list].sort((a, b) =>
+                        a.name.localeCompare(b.name)
+                    );
+                    setGenres(sorted);
+                }
+            })
+            .catch(() => {
+                if (isMounted) {
+                    setError('Unable to load genres right now.');
+                }
+            })
+            .finally(() => {
+                if (isMounted) {
+                    setIsLoading(false);
+                }
+            });
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
+
+    const selectedGenre = useMemo(
+        () => genres.find((genre) => genre.id === selectedGenreId) || null,
+        [genres, selectedGenreId]
+    );
+
+    const handleClear = () => {
+        onChange(null);
     };
 
     return (
-        <div className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-4 text-center">
-            <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-[color:var(--muted)]">
-                Filter by genre?
-            </h2>
-            <div className="mt-3 flex items-center justify-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+            <label className="text-[11px] font-semibold uppercase tracking-[0.25em] text-[color:var(--muted)]">
+                Genre (optional)
+                <select
+                    value={selectedGenreId || ''}
+                    onChange={(event) => {
+                        const value = event.target.value;
+                        if (!value) {
+                            onChange(null);
+                            return;
+                        }
+                        onChange(value);
+                    }}
+                    disabled={isLoading}
+                    className="mt-2 min-w-[180px] rounded-full border border-[color:var(--border)] bg-[color:var(--surface-muted)] px-4 py-2 text-xs text-[color:var(--text)] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--accent)]"
+                >
+                    <option value="">
+                        {isLoading ? 'Loading genres...' : 'Any genre'}
+                    </option>
+                    {genres.map((option) => (
+                        <option key={option.id} value={option.id}>
+                            {option.name}
+                        </option>
+                    ))}
+                </select>
+            </label>
+            {selectedGenreId ? (
                 <button
                     type="button"
-                    onClick={() => setShowGenres(true)}
-                    className="rounded-full bg-[color:var(--accent)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-black"
+                    onClick={handleClear}
+                    className="rounded-full border border-[color:var(--border)] px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.25em] text-[color:var(--muted)] transition duration-200 hover:-translate-y-0.5 hover:text-[color:var(--text)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--accent)]"
                 >
-                    Yes
+                    Clear
                 </button>
-                <button
-                    type="button"
-                    onClick={onClickNo}
-                    className="rounded-full border border-[color:var(--border)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--muted)]"
-                >
-                    No
-                </button>
-            </div>
-
-            {showGenres && (
-                <div className="mt-4">
-                    <label className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--muted)]">
-                        {genre ? `Genre: ${genre}` : 'Select Genre'}
-                        <select
-                            value={genre || ''}
-                            onChange={(event) => {
-                                const selected = genres.find(
-                                    (item) => item.genre === event.target.value
-                                );
-                                if (selected) {
-                                    genreChanger(selected.genre);
-                                    idChanger(selected.id);
-                                }
-                            }}
-                            className="mt-2 w-full rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-muted)] px-3 py-2 text-sm text-[color:var(--text)]"
-                        >
-                            <option value="">Choose</option>
-                            {genres.map((option) => (
-                                <option key={option.id} value={option.genre}>
-                                    {option.genre}
-                                </option>
-                            ))}
-                        </select>
-                    </label>
-                </div>
-            )}
+            ) : null}
+            {error ? <p className="text-xs text-red-400">{error}</p> : null}
         </div>
     );
 };
+
 export default SelectGenre;

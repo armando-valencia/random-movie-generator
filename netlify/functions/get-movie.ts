@@ -175,7 +175,7 @@ export async function handler(event: HandlerEvent): Promise<HandlerResponse> {
 
     const params = event.queryStringParameters || {};
     const serviceParam = params.service && params.service.toLowerCase();
-    const cursorParam = params.cursor || '';
+    const genreParam = params.genre || '';
 
     if (!serviceParam || !isStreamingService(serviceParam)) {
         return {
@@ -186,10 +186,13 @@ export async function handler(event: HandlerEvent): Promise<HandlerResponse> {
     }
 
     const service = serviceParam;
+    const genreFilter = genreParam
+        ? `&genres=${encodeURIComponent(genreParam)}`
+        : '';
     const queryString =
         `country=us&series_granularity=show&order_direction=asc&order_by=original_title&genres_relation=and&output_language=en&show_type=movie&show_original_language=en&catalogs=${encodeURIComponent(
             service
-        )}`;
+        )}${genreFilter}`;
     const url = `${API_BASE_URL}?${queryString}`;
 
     try {
