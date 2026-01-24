@@ -4,12 +4,10 @@ import os
 import sys
 import urllib.parse
 import urllib.request
+import urllib.error
 from datetime import datetime
 
-API_BASE_URL = (
-    "https://streaming-availability.p.rapidapi.com/v2/search/basic"
-    "?country=us&output_language=en&show_type=movie&show_original_language=en"
-)
+API_BASE_URL = "https://streaming-availability.p.rapidapi.com/shows/search/filters"
 ALLOWED_SERVICES = ["netflix", "hulu", "hbo"]
 
 
@@ -25,6 +23,8 @@ def read_max_pages():
 
 
 def extract_next_cursor(payload):
+    if payload.get("hasMore"):
+        return payload.get("nextCursor")
     for key in ("next_cursor", "nextCursor", "next"):
         value = payload.get(key)
         if value:
@@ -37,10 +37,23 @@ def extract_next_cursor(payload):
     return None
 
 
-def build_url(service, cursor=None):
+def build_url(service, cursor=None, include_catalogs=True):
+    params = {
+        "country": "us",
+        "output_language": "en",
+        "show_type": "movie",
+        "series_granularity": "show",
+        "order_by": "original_title",
+        "order_direction": "asc",
+        "genres_relation": "and",
+        "show_original_language": "en",
+    }
+    if include_catalogs:
+        params["catalogs"] = service
     if cursor:
-        return f"{API_BASE_URL}&services={service}&cursor={urllib.parse.quote(cursor)}"
-    return f"{API_BASE_URL}&services={service}"
+        params["cursor"] = cursor
+    query = urllib.parse.urlencode(params, quote_via=urllib.parse.quote)
+    return f"{API_BASE_URL}?{query}"
 
 
 def fetch_json(url, headers):
@@ -57,8 +70,12 @@ def refresh_service(service, headers, max_pages):
     pages = 0
 
     while pages < max_pages:
-        url = build_url(service, cursor)
-        payload = fetch_json(url, headers)
+        url = build_url(service, cursor, include_catalogs=True)
+        try:
+            payload = fetch_json(url, headers)
+        except (urllib.error.HTTPError, urllib.error.URLError):
+            url = build_url(service, cursor, include_catalogs=False)
+            payload = fetch_json(url, headers)
         pages += 1
 
         cursor = extract_next_cursor(payload)

@@ -82,7 +82,7 @@ const Generator = ({ page, service }: GeneratorProps) => {
                                     No pick yet
                                 </p>
                                 <p>
-                                    Tap “Surprise me” to reveal a random movie.
+                                    Tap "Surprise me" to reveal a random movie.
                                 </p>
                             </div>
                         )}
