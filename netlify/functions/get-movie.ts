@@ -258,7 +258,7 @@ export async function handler(event: HandlerEvent): Promise<HandlerResponse> {
             statusCode: response.status,
             headers: {
                 'content-type': 'application/json',
-                'cache-control': 'public, max-age=86400, s-maxage=86400',
+                'cache-control': 'no-store, max-age=0',
             },
             body: JSON.stringify({ result: normalized }),
         };
