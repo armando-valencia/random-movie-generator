@@ -138,27 +138,37 @@ const normalizeShows = (
 };
 
 async function loadCursorServices(): Promise<CursorServices | null> {
-    const localPath = path.resolve(process.cwd(), 'public/data/cursors.json');
-    try {
-        const raw = await fs.readFile(localPath, 'utf8');
-        const payload: { services?: CursorServices } = JSON.parse(raw);
-        return payload.services || null;
-    } catch (error) {
-        const baseUrl = process.env.URL || process.env.DEPLOY_PRIME_URL || null;
-        if (!baseUrl) {
-            return null;
-        }
+    const cwd = process.cwd();
+    const localPaths = [
+        path.resolve(cwd, 'public', 'data', 'cursors.json'),
+        path.resolve(cwd, '..', 'public', 'data', 'cursors.json'),
+    ];
+
+    for (const localPath of localPaths) {
         try {
-            const response = await fetch(`${baseUrl}/data/cursors.json`);
-            if (!response.ok) {
-                return null;
+            const raw = await fs.readFile(localPath, 'utf8');
+            const payload: { services?: CursorServices } = JSON.parse(raw);
+            if (payload.services) {
+                return payload.services;
             }
-            const payload: { services?: CursorServices } =
-                await response.json();
-            return payload.services || null;
-        } catch (fetchError) {
+        } catch (error) {
+            // Try the next path.
+        }
+    }
+
+    const baseUrl = process.env.URL || process.env.DEPLOY_PRIME_URL || null;
+    if (!baseUrl) {
+        return null;
+    }
+    try {
+        const response = await fetch(`${baseUrl}/data/cursors.json`);
+        if (!response.ok) {
             return null;
         }
+        const payload: { services?: CursorServices } = await response.json();
+        return payload.services || null;
+    } catch (fetchError) {
+        return null;
     }
 }
 
@@ -175,6 +185,7 @@ export async function handler(event: HandlerEvent): Promise<HandlerResponse> {
 
     const params = event.queryStringParameters || {};
     const serviceParam = params.service && params.service.toLowerCase();
+    const genreParam = params.genre || '';
     const cursorParam = params.cursor || '';
 
     if (!serviceParam || !isStreamingService(serviceParam)) {
@@ -186,10 +197,26 @@ export async function handler(event: HandlerEvent): Promise<HandlerResponse> {
     }
 
     const service = serviceParam;
+    const cursorServices = await loadCursorServices();
+    const cursorList = Array.isArray(cursorServices?.[service])
+        ? cursorServices?.[service]
+        : DEFAULT_CURSORS[service];
+    const nonEmptyCursors = cursorList.filter(Boolean);
+    const randomIndex = nonEmptyCursors.length
+        ? Math.floor(Math.random() * nonEmptyCursors.length)
+        : 0;
+    const selectedCursor =
+        cursorParam.trim() || nonEmptyCursors[randomIndex] || '';
+    const genreFilter = genreParam
+        ? `&genres=${encodeURIComponent(genreParam)}`
+        : '';
+    const cursorFilter = selectedCursor
+        ? `&cursor=${encodeURIComponent(selectedCursor)}`
+        : '';
     const queryString =
         `country=us&series_granularity=show&order_direction=asc&order_by=original_title&genres_relation=and&output_language=en&show_type=movie&show_original_language=en&catalogs=${encodeURIComponent(
             service
-        )}`;
+        )}${genreFilter}${cursorFilter}`;
     const url = `${API_BASE_URL}?${queryString}`;
 
     try {

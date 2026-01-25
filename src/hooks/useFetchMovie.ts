@@ -34,10 +34,17 @@ const useFetchMovie = () => {
         return candidate;
     };
 
-    const fetchMovie = async (service: StreamingService) => {
+    const fetchMovie = async (
+        service: StreamingService,
+        genreId?: string | null
+    ) => {
         setError(null);
         setLoading(true);
-        const randomCursorUrl = `${API_PROXY_BASE_URL}?service=${service}`;
+        const randomCursorUrl = genreId
+            ? `${API_PROXY_BASE_URL}?service=${service}&genre=${encodeURIComponent(
+                  genreId
+              )}`
+            : `${API_PROXY_BASE_URL}?service=${service}`;
 
         try {
             // Fetch a list of movies from the API
