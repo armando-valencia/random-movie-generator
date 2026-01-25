@@ -24,7 +24,7 @@ const Generator = ({ page, service }: GeneratorProps) => {
     return (
         <div className="space-y-8">
             <BackButton />
-            <div className="relative overflow-hidden rounded-[32px] border border-[color:var(--border)] bg-[color:var(--surface)]/85 p-6 shadow-[0_40px_120px_rgba(15,23,42,0.25)] md:p-12">
+            <div className="relative overflow-visible rounded-[32px] border border-[color:var(--border)] bg-[color:var(--surface)]/85 p-6 shadow-[0_40px_120px_rgba(15,23,42,0.25)] md:p-12">
                 <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.15),_transparent_55%)]" />
                 <div className="relative space-y-8">
                     <div className="space-y-3">
@@ -32,66 +32,46 @@ const Generator = ({ page, service }: GeneratorProps) => {
                             Now streaming on
                         </p>
                         <div className="flex flex-wrap items-end justify-between gap-4">
-                            <h1 className="text-3xl font-semibold md:text-5xl">
-                                {page}
+                            <h1 className="flex items-center gap-3 text-3xl font-semibold md:text-5xl">
+                                <span>{page}</span>
+                                <span
+                                    aria-hidden="true"
+                                    className="inline-flex h-2.5 w-2.5 rounded-full shadow-[0_0_12px_rgba(0,0,0,0.15)]"
+                                    style={{ backgroundColor: 'var(--accent)' }}
+                                />
                             </h1>
-                            <span className="rounded-full border border-[color:var(--border)] bg-[color:var(--surface-muted)] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.3em] text-[color:var(--muted)]">
-                                Random movie engine
-                            </span>
                         </div>
                         <p className="max-w-2xl text-sm text-[color:var(--muted)] md:text-base">
-                            Spin the reel for a fresh pick on {page}. Genre
-                            filters are optional.
+                            Find something worth watching in one click.
                         </p>
+                        <div
+                            aria-hidden="true"
+                            className="h-0.5 w-12 rounded-full opacity-60"
+                            style={{ backgroundColor: 'var(--accent)' }}
+                        />
                     </div>
 
-                    <div className="rounded-3xl border border-[color:var(--border)] bg-[color:var(--surface)]/95 p-6 shadow-[0_25px_70px_rgba(15,23,42,0.2)]">
-                        <div className="flex flex-wrap items-center justify-between gap-4">
-                            <div>
-                                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--muted)]">
-                                    Control strip
-                                </p>
-                                <p className="mt-1 text-sm text-[color:var(--muted)]">
-                                    Genre filters are optional.
-                                </p>
-                            </div>
-                            <div className="flex flex-wrap items-center gap-3">
-                                <button
-                                    type="button"
-                                    onClick={handleGenerate}
-                                    className="rounded-full bg-[color:var(--accent)] px-7 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-black transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_15px_35px_rgba(0,0,0,0.25)]"
-                                >
-                                    Spin the reel
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => setIsModalOpen(false)}
-                                    className="rounded-full border border-[color:var(--border)] px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--muted)] transition duration-200 hover:-translate-y-0.5"
-                                >
-                                    Clear
-                                </button>
-                                {error ? (
-                                    <span className="rounded-full border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-red-400">
-                                        Fetch failed
-                                    </span>
-                                ) : null}
-                            </div>
+                    <div className="accent-orbit rounded-3xl border border-[color:var(--border)] bg-[color:var(--surface)]/95 p-6 shadow-[0_25px_70px_rgba(15,23,42,0.2)]">
+                        <div className="flex flex-wrap items-center gap-4">
+                            <button
+                                type="button"
+                                onClick={handleGenerate}
+                                className="rounded-full bg-[color:var(--accent)] px-7 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-black transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_15px_35px_rgba(0,0,0,0.25)]"
+                            >
+                                Find a movie
+                            </button>
+                            {error ? (
+                                <span className="rounded-full border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-red-400">
+                                    Fetch failed
+                                </span>
+                            ) : null}
                         </div>
 
-                        <div className="mt-5 flex flex-wrap items-center gap-4">
+                        <div className="mt-5">
                             <SelectGenre
                                 selectedGenreId={selectedGenreId}
                                 onChange={setSelectedGenreId}
                             />
-                            {selectedGenreId ? (
-                                <span className="rounded-full border border-[color:var(--border)] bg-[color:var(--surface-muted)] px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.3em] text-[color:var(--text)]">
-                                    Filter active
-                                </span>
-                            ) : (
-                                <span className="rounded-full border border-dashed border-[color:var(--border)] px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.3em] text-[color:var(--muted)]">
-                                    No filter
-                                </span>
-                            )}
                         </div>
 
                         <div className="mt-6 rounded-2xl border border-dashed border-[color:var(--border)] bg-[color:var(--surface-muted)] p-5 text-sm text-[color:var(--muted)]">
@@ -118,7 +98,7 @@ const Generator = ({ page, service }: GeneratorProps) => {
                                     <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--muted)]">
                                         No pick yet
                                     </p>
-                                    <p>Tap "Spin the reel" to start.</p>
+                                    <p>Tap "Find a movie" to start.</p>
                                 </div>
                             )}
                         </div>
