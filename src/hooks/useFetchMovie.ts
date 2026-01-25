@@ -6,6 +6,23 @@ type FetchMovieResponse = {
     result?: Movie[];
 };
 
+let localMovieCache: Movie[] | null = null;
+
+const loadLocalMovies = async () => {
+    if (!import.meta.env.DEV) {
+        return null;
+    }
+    if (localMovieCache) {
+        return localMovieCache;
+    }
+    const module = (await import('../../test_data.json')) as {
+        default?: FetchMovieResponse;
+    };
+    const items = module.default?.result;
+    localMovieCache = Array.isArray(items) ? items : [];
+    return localMovieCache;
+};
+
 const useFetchMovie = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<Error | null>(null);
@@ -40,6 +57,28 @@ const useFetchMovie = () => {
     ) => {
         setError(null);
         setLoading(true);
+        const localMovies = await loadLocalMovies();
+        if (localMovies && localMovies.length) {
+            const serviceMatches = localMovies.filter((item) =>
+                item.streamingInfo?.us?.[service]?.length
+            );
+            const genreMatches = genreId
+                ? (serviceMatches.length ? serviceMatches : localMovies).filter(
+                      (item) =>
+                          item.genres?.some((genre) => genre.id === genreId)
+                  )
+                : serviceMatches.length
+                  ? serviceMatches
+                  : localMovies;
+            const selected = pickRandomMovie(genreMatches);
+            if (selected) {
+                lastMovieIdRef.current =
+                    selected.imdbId || selected.tmdbId || null;
+                setMovie(selected);
+                setLoading(false);
+                return;
+            }
+        }
         const randomCursorUrl = genreId
             ? `${API_PROXY_BASE_URL}?service=${service}&genre=${encodeURIComponent(
                   genreId
