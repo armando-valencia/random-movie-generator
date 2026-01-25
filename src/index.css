@@ -1,9 +1,315 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Urbanist:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+    color-scheme: light;
+    --bg: #fff6e9;
+    --surface: #ffffff;
+    --surface-muted: #f3eee6;
+    --text: #050608;
+    --muted: #161a22;
+    --accent: #ff5a3c;
+    --accent-2: #0f766e;
+    --accent-3: #fbbf24;
+    --border: rgba(5, 6, 8, 0.12);
+    --glow-1: rgba(255, 115, 89, 0.22);
+    --glow-2: rgba(255, 199, 138, 0.18);
+    --glow-3: rgba(255, 227, 170, 0.22);
+    --blob-1: rgba(255, 102, 82, 0.16);
+    --blob-2: rgba(255, 210, 156, 0.18);
+    --blob-3: rgba(251, 191, 36, 0.16);
+    --bg-grad-1: rgba(255, 248, 238, 0.98);
+    --bg-grad-2: rgba(255, 245, 232, 0.6);
+}
+
+.dark {
+    color-scheme: dark;
+    --bg: #07090f;
+    --surface: #11111f;
+    --surface-muted: #17172b;
+    --text: #f4f4ff;
+    --muted: #9aa1b8;
+    --accent: #ff6b3d;
+    --accent-2: #7c3aed;
+    --accent-3: #22d3ee;
+    --border: rgba(244, 244, 255, 0.15);
+    --glow-1: rgba(124, 58, 237, 0.35);
+    --glow-2: rgba(14, 116, 144, 0.32);
+    --glow-3: rgba(255, 107, 61, 0.2);
+    --blob-1: rgba(124, 58, 237, 0.28);
+    --blob-2: rgba(14, 116, 144, 0.26);
+    --blob-3: rgba(255, 107, 61, 0.18);
+    --bg-grad-1: rgba(7, 9, 15, 0.98);
+    --bg-grad-2: rgba(10, 12, 20, 0.7);
+}
+
+:root[data-service='netflix'],
+body[data-service='netflix'] {
+    --bg: #f4f6f8;
+    --surface: #ffffff;
+    --surface-muted: #edf1f5;
+    --accent: #e50914;
+    --accent-2: #b91c1c;
+    --accent-3: #f43f5e;
+    --border: rgba(5, 6, 8, 0.12);
+    --glow-1: rgba(229, 9, 20, 0.1);
+    --glow-2: rgba(244, 63, 94, 0.08);
+    --glow-3: rgba(251, 113, 133, 0.07);
+    --blob-1: rgba(229, 9, 20, 0.09);
+    --blob-2: rgba(244, 63, 94, 0.08);
+    --blob-3: rgba(251, 113, 133, 0.08);
+    --bg-grad-1: rgba(248, 250, 252, 0.98);
+    --bg-grad-2: rgba(235, 241, 246, 0.7);
+}
+
+.dark[data-service='netflix'],
+.dark body[data-service='netflix'] {
+    --bg: #0b0709;
+    --surface: #141015;
+    --surface-muted: #1b1116;
+    --accent: #e50914;
+    --accent-2: #f43f5e;
+    --accent-3: #fb923c;
+    --border: rgba(244, 63, 94, 0.22);
+    --glow-1: rgba(229, 9, 20, 0.32);
+    --glow-2: rgba(244, 63, 94, 0.28);
+    --glow-3: rgba(251, 146, 60, 0.22);
+    --blob-1: rgba(229, 9, 20, 0.3);
+    --blob-2: rgba(244, 63, 94, 0.26);
+    --blob-3: rgba(251, 146, 60, 0.2);
+    --bg-grad-1: rgba(11, 7, 9, 0.98);
+    --bg-grad-2: rgba(18, 10, 12, 0.72);
+}
+
+:root[data-service='hulu'],
+body[data-service='hulu'] {
+    --bg: #f4f6f8;
+    --surface: #ffffff;
+    --surface-muted: #edf1f5;
+    --accent: #1ce783;
+    --accent-2: #16a34a;
+    --accent-3: #84cc16;
+    --border: rgba(5, 6, 8, 0.12);
+    --glow-1: rgba(28, 231, 131, 0.12);
+    --glow-2: rgba(16, 185, 129, 0.1);
+    --glow-3: rgba(132, 204, 22, 0.08);
+    --blob-1: rgba(28, 231, 131, 0.1);
+    --blob-2: rgba(16, 185, 129, 0.09);
+    --blob-3: rgba(132, 204, 22, 0.08);
+    --bg-grad-1: rgba(248, 250, 252, 0.98);
+    --bg-grad-2: rgba(235, 241, 246, 0.7);
+}
+
+.dark[data-service='hulu'],
+.dark body[data-service='hulu'] {
+    --bg: #060c09;
+    --surface: #0f1713;
+    --surface-muted: #131f18;
+    --accent: #1ce783;
+    --accent-2: #22c55e;
+    --accent-3: #a3e635;
+    --border: rgba(74, 222, 128, 0.22);
+    --glow-1: rgba(28, 231, 131, 0.32);
+    --glow-2: rgba(34, 197, 94, 0.28);
+    --glow-3: rgba(163, 230, 53, 0.22);
+    --blob-1: rgba(28, 231, 131, 0.3);
+    --blob-2: rgba(34, 197, 94, 0.26);
+    --blob-3: rgba(163, 230, 53, 0.22);
+    --bg-grad-1: rgba(6, 12, 9, 0.98);
+    --bg-grad-2: rgba(10, 18, 13, 0.72);
+}
+
+:root[data-service='hbo'],
+body[data-service='hbo'] {
+    --bg: #f4f6f8;
+    --surface: #ffffff;
+    --surface-muted: #edf1f5;
+    --accent: #6e6cff;
+    --accent-2: #8b5cf6;
+    --accent-3: #38bdf8;
+    --border: rgba(5, 6, 8, 0.12);
+    --glow-1: rgba(110, 108, 255, 0.12);
+    --glow-2: rgba(139, 92, 246, 0.1);
+    --glow-3: rgba(56, 189, 248, 0.09);
+    --blob-1: rgba(110, 108, 255, 0.1);
+    --blob-2: rgba(139, 92, 246, 0.1);
+    --blob-3: rgba(56, 189, 248, 0.08);
+    --bg-grad-1: rgba(248, 250, 252, 0.98);
+    --bg-grad-2: rgba(235, 241, 246, 0.7);
+}
+
+.dark[data-service='hbo'],
+.dark body[data-service='hbo'] {
+    --bg: #080815;
+    --surface: #111022;
+    --surface-muted: #16142a;
+    --accent: #6e6cff;
+    --accent-2: #8b5cf6;
+    --accent-3: #38bdf8;
+    --border: rgba(139, 92, 246, 0.24);
+    --glow-1: rgba(110, 108, 255, 0.32);
+    --glow-2: rgba(139, 92, 246, 0.3);
+    --glow-3: rgba(56, 189, 248, 0.22);
+    --blob-1: rgba(110, 108, 255, 0.3);
+    --blob-2: rgba(139, 92, 246, 0.28);
+    --blob-3: rgba(56, 189, 248, 0.2);
+    --bg-grad-1: rgba(8, 8, 21, 0.98);
+    --bg-grad-2: rgba(14, 12, 28, 0.72);
+}
+
 html,
 body {
-    overflow: hidden;
-    background-color: #2a0054;
+    min-height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: 'Space Grotesk', 'Urbanist', sans-serif;
+    color: var(--text);
+    background-color: var(--bg);
+    background-image: linear-gradient(135deg, var(--bg-grad-1), var(--bg-grad-2));
+}
+
+.dark body {
+    background-color: var(--bg);
+    background-image:
+        radial-gradient(circle at 10% 12%, var(--glow-1), transparent 55%),
+        radial-gradient(circle at 85% 8%, var(--glow-2), transparent 52%),
+        radial-gradient(circle at 70% 85%, var(--glow-3), transparent 58%),
+        linear-gradient(135deg, var(--bg-grad-1), var(--bg-grad-2));
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+        radial-gradient(circle at 20% 20%, rgba(5, 6, 8, 0.06), transparent 40%),
+        radial-gradient(circle at 80% 0%, rgba(5, 6, 8, 0.04), transparent 45%),
+        radial-gradient(circle at 90% 90%, rgba(5, 6, 8, 0.05), transparent 50%);
+    opacity: 0.12;
+    mix-blend-mode: multiply;
+    z-index: 0;
+}
+
+.dark body::before {
+    display: none;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.25s ease-out both;
+}
+
+.genre-scroll {
+    scrollbar-width: auto;
+    scrollbar-color: var(--accent) transparent;
+}
+
+.genre-scroll::-webkit-scrollbar {
+    width: 12px;
+}
+
+.genre-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.genre-scroll::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 999px;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+    box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+.genre-scroll::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--accent) 85%, black);
+    box-shadow: 0 0 16px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+.accent-orbit {
+    position: relative;
+}
+
+.accent-orbit::before,
+.accent-orbit::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.accent-orbit::before {
+    padding: 2px;
+    background: linear-gradient(
+        110deg,
+        transparent 0%,
+        transparent 35%,
+        color-mix(in srgb, var(--accent) 70%, transparent) 50%,
+        transparent 65%,
+        transparent 100%
+    );
+    background-size: 300% 100%;
+    background-position: 0% 50%;
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    filter: drop-shadow(0 0 14px color-mix(in srgb, var(--accent) 45%, transparent));
+    animation: perimeterSweep 10s ease-in-out infinite;
+}
+
+.accent-orbit::after {
+    inset: -6px;
+    background: linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--accent) 14%, transparent),
+        transparent 60%
+    );
+    opacity: 0.7;
+    filter: blur(8px);
+    animation: perimeterPulse 4.8s ease-in-out infinite;
+}
+
+@keyframes perimeterSweep {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@keyframes perimeterPulse {
+    0%,
+    100% {
+        opacity: 0.35;
+    }
+    50% {
+        opacity: 0.85;
+    }
+}
+
+#root {
+    min-height: 100vh;
 }
