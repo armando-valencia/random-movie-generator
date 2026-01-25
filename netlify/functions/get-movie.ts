@@ -23,6 +23,7 @@ type CursorServices = Record<string, string[]>;
 
 type HandlerEvent = {
     queryStringParameters?: Record<string, string | undefined> | null;
+    headers?: Record<string, string | undefined> | null;
 };
 
 type HandlerResponse = {
@@ -137,7 +138,9 @@ const normalizeShows = (
     });
 };
 
-async function loadCursorServices(): Promise<CursorServices | null> {
+async function loadCursorServices(
+    baseUrlOverride?: string | null
+): Promise<CursorServices | null> {
     const cwd = process.cwd();
     const localPaths = [
         path.resolve(cwd, 'public', 'data', 'cursors.json'),
@@ -156,7 +159,11 @@ async function loadCursorServices(): Promise<CursorServices | null> {
         }
     }
 
-    const baseUrl = process.env.URL || process.env.DEPLOY_PRIME_URL || null;
+    const baseUrl =
+        baseUrlOverride ||
+        process.env.URL ||
+        process.env.DEPLOY_PRIME_URL ||
+        null;
     if (!baseUrl) {
         return null;
     }
@@ -187,6 +194,10 @@ export async function handler(event: HandlerEvent): Promise<HandlerResponse> {
     const serviceParam = params.service && params.service.toLowerCase();
     const genreParam = params.genre || '';
     const cursorParam = params.cursor || '';
+    const headers = event.headers || {};
+    const proto = headers['x-forwarded-proto'] || 'https';
+    const host = headers['host'];
+    const requestBaseUrl = host ? `${proto}://${host}` : null;
 
     if (!serviceParam || !isStreamingService(serviceParam)) {
         return {
@@ -197,7 +208,7 @@ export async function handler(event: HandlerEvent): Promise<HandlerResponse> {
     }
 
     const service = serviceParam;
-    const cursorServices = await loadCursorServices();
+    const cursorServices = await loadCursorServices(requestBaseUrl);
     const cursorList = Array.isArray(cursorServices?.[service])
         ? cursorServices?.[service]
         : DEFAULT_CURSORS[service];
