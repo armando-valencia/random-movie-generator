@@ -1,14 +1,20 @@
 #!/usr/bin/env python3
 import json
 import os
-import sys
+import enum
 import urllib.parse
 import urllib.request
 import urllib.error
 from datetime import datetime
 
 API_BASE_URL = "https://streaming-availability.p.rapidapi.com/shows/search/filters"
-ALLOWED_SERVICES = ["netflix", "hulu", "hbo"]
+
+class ServiceEnum(enum.Enum):
+    NETFLIX = "netflix"
+    HULU = "hulu"
+    HBO = "hbo"
+    
+ALLOWED_SERVICES = [ServiceEnum.NETFLIX, ServiceEnum.HULU, ServiceEnum.HBO]
 
 
 def read_max_pages():

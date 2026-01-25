@@ -7,7 +7,7 @@ type FetchMovieResponse = {
 };
 
 const useFetchMovie = () => {
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<Error | null>(null);
     const [movie, setMovie] = useState<Movie | null>(null);
     const lastMovieIdRef = useRef<string | null>(null);
