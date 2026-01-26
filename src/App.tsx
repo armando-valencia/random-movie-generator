@@ -16,6 +16,8 @@ const getServiceFromPath = (pathname: string): StreamingServiceSlug | null => {
 
 function App() {
     const location = useLocation();
+    const isUsingLocalData =
+        import.meta.env.DEV && import.meta.env.VITE_USE_TEST_DATA === 'true';
 
     useEffect(() => {
         const service = getServiceFromPath(location.pathname);
@@ -37,6 +39,11 @@ function App() {
             <div className="pointer-events-none absolute -right-6 bottom-[-12%] h-96 w-96 rounded-full bg-[color:var(--blob-3)] blur-[140px]" />
 
             <div className="relative z-10 flex min-h-screen flex-col">
+                {isUsingLocalData ? (
+                    <div className="w-full border-b border-blue-700 bg-blue-600 px-6 py-1 text-center text-[10px] font-semibold uppercase tracking-[0.35em] text-white md:px-10">
+                        Local data mode
+                    </div>
+                ) : null}
                 <header className="flex items-center justify-between px-6 py-5 md:px-10">
                     <Link
                         to="/"

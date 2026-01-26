@@ -37,7 +37,6 @@ Open the local site at `http://localhost:8888`.
 
 ## Todo:
 
--   [ ] Genre filtering
 -   [ ] Add more platforms
 -   [ ] Bookmark movies
 

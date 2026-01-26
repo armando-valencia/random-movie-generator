@@ -7,19 +7,25 @@ type FetchMovieResponse = {
 };
 
 let localMovieCache: Movie[] | null = null;
+const shouldUseLocalData =
+    import.meta.env.DEV && import.meta.env.VITE_USE_TEST_DATA === 'true';
 
 const loadLocalMovies = async () => {
-    if (!import.meta.env.DEV) {
+    if (!shouldUseLocalData) {
         return null;
     }
     if (localMovieCache) {
         return localMovieCache;
     }
-    const module = (await import('../../test_data.json')) as {
-        default?: FetchMovieResponse;
-    };
-    const items = module.default?.result;
-    localMovieCache = Array.isArray(items) ? items : [];
+    try {
+        const module = (await import('../../test_data.json')) as {
+            default?: FetchMovieResponse;
+        };
+        const items = module.default?.result;
+        localMovieCache = Array.isArray(items) ? items : [];
+    } catch (error) {
+        localMovieCache = [];
+    }
     return localMovieCache;
 };
 
@@ -57,7 +63,7 @@ const useFetchMovie = () => {
     ) => {
         setError(null);
         setLoading(true);
-        const localMovies = await loadLocalMovies();
+        const localMovies = shouldUseLocalData ? await loadLocalMovies() : null;
         if (localMovies && localMovies.length) {
             const serviceMatches = localMovies.filter((item) =>
                 item.streamingInfo?.us?.[service]?.length

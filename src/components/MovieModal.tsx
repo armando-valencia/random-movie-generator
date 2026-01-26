@@ -63,7 +63,7 @@ const MovieModal = ({
         dragOffsetRef.current = 0;
         draggingRef.current = false;
         dragCaptureRef.current = null;
-    }, [isOpen, movie?.id]);
+    }, [isOpen, movie?.imdbId, movie?.tmdbId, movie?.title]);
 
     useEffect(() => {
         if (!isCollapsed) {
@@ -90,8 +90,7 @@ const MovieModal = ({
         const threshold = Math.min(window.innerHeight * 0.22, 160);
         const shouldCollapse =
             !isCollapsed && dragOffsetRef.current > threshold;
-        const shouldExpand =
-            isCollapsed && dragOffsetRef.current < -threshold;
+        const shouldExpand = isCollapsed && dragOffsetRef.current < -threshold;
         if (shouldCollapse) {
             setIsDragging(false);
             draggingRef.current = false;
@@ -174,7 +173,6 @@ const MovieModal = ({
         fallbackService?.watchLink ||
         fallbackService?.link ||
         '';
-    const serviceLabel = service ? service.toUpperCase() : 'Service';
     const imdbLabel = movie?.imdbRating !== undefined ? movie.imdbRating : '-';
     const overview = movie?.overview?.trim() || '';
     const overviewLimit = 220;
@@ -190,9 +188,7 @@ const MovieModal = ({
         ? Math.min(0.3, dragProgress * 0.3)
         : Math.max(0.15, 0.4 - dragProgress * 0.2);
     const dragScale = 1 - Math.min(positiveDrag / 360, 1) * 0.03;
-    const baseOffset = isCollapsed
-        ? `calc(100% - ${peekHeight}px)`
-        : '0px';
+    const baseOffset = isCollapsed ? `calc(100% - ${peekHeight}px)` : '0px';
     const translateY =
         dragOffset === 0
             ? baseOffset
@@ -343,14 +339,11 @@ const MovieModal = ({
                                 ref={scrollRef}
                                 className="modal-scroll flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pb-4 overscroll-contain"
                             >
-                                {/* <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--muted)]">
-                                    {serviceLabel} pick
-                                </p> */}
                                 <h2 className="mt-2 text-2xl font-semibold md:text-3xl">
                                     {movie.title}
                                 </h2>
                                 <p className="mt-2 text-sm text-[color:var(--muted)]">
-                                    {movie.year} - IMDb {imdbLabel}
+                                    {movie.year} | IMDb {imdbLabel}
                                 </p>
                                 {overview ? (
                                     <div className="space-y-2">
