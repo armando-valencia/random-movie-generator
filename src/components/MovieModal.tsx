@@ -8,7 +8,9 @@ import type {
 
 type MovieModalProps = {
     isOpen: boolean;
+    isCollapsed: boolean;
     onClose: () => void;
+    onExpand: () => void;
     onNext: () => void;
     movie: Movie | null;
     isLoading: boolean;
@@ -17,7 +19,9 @@ type MovieModalProps = {
 
 const MovieModal = ({
     isOpen,
+    isCollapsed,
     onClose,
+    onExpand,
     onNext,
     movie,
     isLoading,
@@ -30,6 +34,7 @@ const MovieModal = ({
     const dragPointerIdRef = useRef<number | null>(null);
     const dragOffsetRef = useRef(0);
     const draggingRef = useRef(false);
+    const dragCaptureRef = useRef<HTMLElement | null>(null);
     const modalRef = useRef<HTMLDivElement | null>(null);
     const scrollRef = useRef<HTMLDivElement | null>(null);
 
@@ -57,7 +62,97 @@ const MovieModal = ({
         setIsDragging(false);
         dragOffsetRef.current = 0;
         draggingRef.current = false;
+        dragCaptureRef.current = null;
     }, [isOpen, movie?.id]);
+
+    useEffect(() => {
+        if (!isCollapsed) {
+            return;
+        }
+        setDragOffset(0);
+        dragOffsetRef.current = 0;
+        setIsDragging(false);
+        draggingRef.current = false;
+        dragCaptureRef.current = null;
+    }, [isCollapsed]);
+
+    const finishDrag = (pointerId?: number | null) => {
+        if (dragPointerIdRef.current === null) {
+            return;
+        }
+        if (
+            pointerId !== undefined &&
+            pointerId !== null &&
+            dragPointerIdRef.current !== pointerId
+        ) {
+            return;
+        }
+        const threshold = Math.min(window.innerHeight * 0.22, 160);
+        const shouldCollapse =
+            !isCollapsed && dragOffsetRef.current > threshold;
+        const shouldExpand =
+            isCollapsed && dragOffsetRef.current < -threshold;
+        if (shouldCollapse) {
+            setIsDragging(false);
+            draggingRef.current = false;
+            setDragOffset(0);
+            dragOffsetRef.current = 0;
+            onClose();
+        } else if (shouldExpand) {
+            setIsDragging(false);
+            draggingRef.current = false;
+            setDragOffset(0);
+            dragOffsetRef.current = 0;
+            onExpand();
+        } else {
+            setDragOffset(0);
+            dragOffsetRef.current = 0;
+            setIsDragging(false);
+            draggingRef.current = false;
+        }
+        if (dragPointerIdRef.current !== null && dragCaptureRef.current) {
+            try {
+                dragCaptureRef.current.releasePointerCapture(
+                    dragPointerIdRef.current,
+                );
+            } catch {
+                // Ignore release errors when capture is already cleared.
+            }
+        }
+        dragPointerIdRef.current = null;
+        dragCaptureRef.current = null;
+    };
+
+    useEffect(() => {
+        if (!isOpen) {
+            return undefined;
+        }
+        if (!isDragging) {
+            return undefined;
+        }
+        const handlePointerMove = (event: PointerEvent) => {
+            if (dragPointerIdRef.current !== event.pointerId) {
+                return;
+            }
+            const delta = event.clientY - dragStartYRef.current;
+            const clamped = isCollapsed
+                ? Math.min(0, delta)
+                : Math.max(0, delta);
+            dragOffsetRef.current = clamped;
+            setDragOffset(clamped);
+        };
+        const handlePointerUp = (event: PointerEvent) => {
+            finishDrag(event.pointerId);
+        };
+        window.addEventListener('pointermove', handlePointerMove);
+        window.addEventListener('pointerup', handlePointerUp);
+        window.addEventListener('pointercancel', handlePointerUp);
+        return () => {
+            window.removeEventListener('pointermove', handlePointerMove);
+            window.removeEventListener('pointerup', handlePointerUp);
+            window.removeEventListener('pointercancel', handlePointerUp);
+        };
+    }, [isCollapsed, isDragging, isOpen]);
 
     if (!isOpen) {
         return null;
@@ -88,45 +183,35 @@ const MovieModal = ({
         isOverviewExpanded || !shouldTruncateOverview
             ? overview
             : `${overview.slice(0, overviewLimit).trimEnd()}...`;
-    const dragProgress = Math.min(dragOffset / 360, 1);
-    const overlayOpacity = Math.max(0.15, 0.4 - dragProgress * 0.2);
-    const dragScale = 1 - dragProgress * 0.03;
-    const handleDragEnd = (event: React.PointerEvent<HTMLDivElement>) => {
-        if (
-            dragPointerIdRef.current !== null &&
-            dragPointerIdRef.current !== event.pointerId
-        ) {
-            return;
-        }
-        const threshold = Math.min(window.innerHeight * 0.22, 160);
-        if (dragOffsetRef.current > threshold) {
-            setIsDragging(false);
-            draggingRef.current = false;
-            setDragOffset(window.innerHeight);
-            dragOffsetRef.current = window.innerHeight;
-            window.setTimeout(onClose, 220);
-        } else {
-            setDragOffset(0);
-            dragOffsetRef.current = 0;
-            setIsDragging(false);
-            draggingRef.current = false;
-        }
-        if (dragPointerIdRef.current !== null) {
-            try {
-                event.currentTarget.releasePointerCapture(
-                    dragPointerIdRef.current,
-                );
-            } catch {
-                // Ignore release errors when capture is already cleared.
-            }
-        }
-        dragPointerIdRef.current = null;
-    };
+    const peekHeight = 72;
+    const positiveDrag = Math.max(dragOffset, 0);
+    const dragProgress = Math.min(Math.abs(dragOffset) / 360, 1);
+    const overlayOpacity = isCollapsed
+        ? Math.min(0.3, dragProgress * 0.3)
+        : Math.max(0.15, 0.4 - dragProgress * 0.2);
+    const dragScale = 1 - Math.min(positiveDrag / 360, 1) * 0.03;
+    const baseOffset = isCollapsed
+        ? `calc(100% - ${peekHeight}px)`
+        : '0px';
+    const translateY =
+        dragOffset === 0
+            ? baseOffset
+            : `calc(${baseOffset} ${
+                  dragOffset < 0 ? '-' : '+'
+              } ${Math.abs(dragOffset)}px)`;
+    const hasTranslate = isCollapsed || dragOffset !== 0;
+    const transformValue = hasTranslate
+        ? `translate3d(0, ${translateY}, 0)${
+              dragOffset ? ` scale(${dragScale})` : ''
+          }`
+        : undefined;
 
     return createPortal(
         <div
-            className="fixed inset-0 z-50 flex items-end justify-center px-0 pb-0 pt-6 sm:items-center sm:px-4 sm:pb-4 sm:pt-4"
-            onClick={onClose}
+            className={`fixed inset-0 z-50 flex items-end justify-center px-0 pb-0 pt-6 sm:items-center sm:px-4 sm:pb-4 sm:pt-4 ${
+                isCollapsed ? 'pointer-events-none' : ''
+            }`}
+            onClick={isCollapsed ? undefined : onClose}
             role="presentation"
             style={{
                 backgroundColor: `rgba(0, 0, 0, ${overlayOpacity})`,
@@ -137,15 +222,17 @@ const MovieModal = ({
         >
             <div
                 ref={modalRef}
-                className="relative z-10 w-full max-w-4xl max-h-[90vh] h-[90vh] overflow-hidden rounded-t-2xl border border-[color:var(--border)] bg-[color:var(--surface)] shadow-[0_30px_120px_rgba(15,23,42,0.45)] animate-fade-in sm:h-auto sm:rounded-3xl"
+                className="pointer-events-auto relative z-10 w-full max-w-4xl max-h-[90vh] h-[90vh] overflow-hidden rounded-t-2xl border border-[color:var(--border)] bg-[color:var(--surface)] shadow-[0_30px_120px_rgba(15,23,42,0.45)] animate-fade-in sm:h-auto sm:rounded-3xl"
                 onClick={(event) => event.stopPropagation()}
                 style={{
-                    transform: dragOffset
-                        ? `translate3d(0, ${dragOffset}px, 0) scale(${dragScale})`
-                        : undefined,
+                    transform: transformValue,
                     transition: isDragging
                         ? 'none'
-                        : 'transform 240ms ease-out',
+                        : 'transform 240ms ease-out, height 240ms ease-out, max-height 240ms ease-out',
+                    animation:
+                        isDragging || dragOffset || isCollapsed
+                            ? 'none'
+                            : undefined,
                     touchAction: isDragging ? 'none' : 'pan-y',
                     willChange: isDragging ? 'transform' : undefined,
                     boxShadow: dragOffset
@@ -154,11 +241,44 @@ const MovieModal = ({
                 }}
             >
                 <div className="absolute inset-0 -z-10 rounded-t-2xl bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.15),_transparent_60%)] sm:rounded-3xl" />
+                {movie ? (
+                    <button
+                        type="button"
+                        onClick={onExpand}
+                        onPointerDown={(event) => {
+                            if (!isCollapsed || event.button !== 0) {
+                                return;
+                            }
+                            event.preventDefault();
+                            dragStartYRef.current = event.clientY;
+                            dragPointerIdRef.current = event.pointerId;
+                            dragOffsetRef.current = 0;
+                            draggingRef.current = true;
+                            dragCaptureRef.current = event.currentTarget;
+                            event.currentTarget.setPointerCapture(
+                                event.pointerId,
+                            );
+                            setIsDragging(true);
+                        }}
+                        className={`absolute inset-x-0 top-0 z-30 flex h-[72px] select-none touch-none items-center gap-3 border-b border-[color:var(--border)] bg-[color:var(--surface)] px-6 text-left text-sm font-semibold text-[color:var(--text)] shadow-[0_10px_30px_rgba(0,0,0,0.25)] transition ${
+                            isCollapsed
+                                ? 'opacity-100'
+                                : 'pointer-events-none opacity-0'
+                        }`}
+                        aria-expanded={!isCollapsed}
+                    >
+                        <span className="line-clamp-1 drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)]">
+                            {movie.title}
+                        </span>
+                    </button>
+                ) : null}
                 <button
                     type="button"
                     aria-label="Close modal"
                     onClick={onClose}
-                    className="absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-[color:var(--border)] bg-[color:var(--surface)] text-lg font-semibold text-[color:var(--text)] shadow-[0_10px_30px_rgba(15,23,42,0.25)] transition duration-200 hover:-translate-y-0.5 sm:right-6 sm:top-6"
+                    className={`absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-[color:var(--border)] bg-[color:var(--surface)] text-lg font-semibold text-[color:var(--text)] shadow-[0_10px_30px_rgba(15,23,42,0.25)] transition duration-200 hover:-translate-y-0.5 sm:right-6 sm:top-6 ${
+                        isCollapsed ? 'hidden' : ''
+                    }`}
                 >
                     x
                 </button>
@@ -177,6 +297,9 @@ const MovieModal = ({
                         <div
                             className="relative max-h-[40vh] min-h-[240px] touch-none overflow-hidden rounded-t-2xl bg-[color:var(--surface-muted)]"
                             onPointerDown={(event) => {
+                                if (isCollapsed) {
+                                    return;
+                                }
                                 if (event.button !== 0) {
                                     return;
                                 }
@@ -191,27 +314,12 @@ const MovieModal = ({
                                 dragPointerIdRef.current = event.pointerId;
                                 dragOffsetRef.current = 0;
                                 draggingRef.current = true;
+                                dragCaptureRef.current = event.currentTarget;
                                 event.currentTarget.setPointerCapture(
                                     event.pointerId,
                                 );
                                 setIsDragging(true);
                             }}
-                            onPointerMove={(event) => {
-                                if (
-                                    !draggingRef.current ||
-                                    dragPointerIdRef.current !== event.pointerId
-                                ) {
-                                    return;
-                                }
-                                const delta = Math.max(
-                                    0,
-                                    event.clientY - dragStartYRef.current,
-                                );
-                                dragOffsetRef.current = delta;
-                                setDragOffset(delta);
-                            }}
-                            onPointerUp={handleDragEnd}
-                            onPointerCancel={handleDragEnd}
                         >
                             {movie.posterURLs?.['342'] ||
                             movie.backdropURLs?.['780'] ? (
