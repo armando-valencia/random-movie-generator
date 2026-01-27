@@ -18,10 +18,13 @@ const loadLocalMovies = async () => {
         return localMovieCache;
     }
     try {
-        const module = (await import('../../test_data.json')) as {
-            default?: FetchMovieResponse;
-        };
-        const items = module.default?.result;
+        const response = await fetch('/test_data.json', { cache: 'no-store' });
+        if (!response.ok) {
+            localMovieCache = [];
+            return localMovieCache;
+        }
+        const data: FetchMovieResponse = await response.json();
+        const items = data?.result;
         localMovieCache = Array.isArray(items) ? items : [];
     } catch (error) {
         localMovieCache = [];

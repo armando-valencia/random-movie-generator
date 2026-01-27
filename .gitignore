@@ -33,4 +33,4 @@ deno.lock
 .netlify
 
 
-test_data.json
+public/test_data.json
