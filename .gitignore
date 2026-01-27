@@ -31,3 +31,6 @@ deno.lock
 
 # Local Netlify folder
 .netlify
+
+
+public/test_data.json

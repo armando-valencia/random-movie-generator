@@ -6,8 +6,34 @@ type FetchMovieResponse = {
     result?: Movie[];
 };
 
+let localMovieCache: Movie[] | null = null;
+const shouldUseLocalData =
+    import.meta.env.DEV && import.meta.env.VITE_USE_TEST_DATA === 'true';
+
+const loadLocalMovies = async () => {
+    if (!shouldUseLocalData) {
+        return null;
+    }
+    if (localMovieCache) {
+        return localMovieCache;
+    }
+    try {
+        const response = await fetch('/test_data.json', { cache: 'no-store' });
+        if (!response.ok) {
+            localMovieCache = [];
+            return localMovieCache;
+        }
+        const data: FetchMovieResponse = await response.json();
+        const items = data?.result;
+        localMovieCache = Array.isArray(items) ? items : [];
+    } catch (error) {
+        localMovieCache = [];
+    }
+    return localMovieCache;
+};
+
 const useFetchMovie = () => {
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<Error | null>(null);
     const [movie, setMovie] = useState<Movie | null>(null);
     const lastMovieIdRef = useRef<string | null>(null);
@@ -40,6 +66,28 @@ const useFetchMovie = () => {
     ) => {
         setError(null);
         setLoading(true);
+        const localMovies = shouldUseLocalData ? await loadLocalMovies() : null;
+        if (localMovies && localMovies.length) {
+            const serviceMatches = localMovies.filter((item) =>
+                item.streamingInfo?.us?.[service]?.length
+            );
+            const genreMatches = genreId
+                ? (serviceMatches.length ? serviceMatches : localMovies).filter(
+                      (item) =>
+                          item.genres?.some((genre) => genre.id === genreId)
+                  )
+                : serviceMatches.length
+                  ? serviceMatches
+                  : localMovies;
+            const selected = pickRandomMovie(genreMatches);
+            if (selected) {
+                lastMovieIdRef.current =
+                    selected.imdbId || selected.tmdbId || null;
+                setMovie(selected);
+                setLoading(false);
+                return;
+            }
+        }
         const randomCursorUrl = genreId
             ? `${API_PROXY_BASE_URL}?service=${service}&genre=${encodeURIComponent(
                   genreId

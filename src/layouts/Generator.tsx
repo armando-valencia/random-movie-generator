@@ -12,12 +12,14 @@ type GeneratorProps = {
 
 const Generator = ({ page, service }: GeneratorProps) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalCollapsed, setIsModalCollapsed] = useState<boolean>(false);
     const [selectedGenreId, setSelectedGenreId] = useState<string | null>(null);
 
     const { loading, error, movie, fetchMovie } = useFetchMovie();
 
     const handleGenerate = () => {
         setIsModalOpen(true);
+        setIsModalCollapsed(false);
         fetchMovie(service, selectedGenreId);
     };
 
@@ -74,7 +76,7 @@ const Generator = ({ page, service }: GeneratorProps) => {
                             />
                         </div>
 
-                        <div className="mt-6 rounded-2xl border border-dashed border-[color:var(--border)] bg-[color:var(--surface-muted)] p-5 text-sm text-[color:var(--muted)]">
+                        <div className="mt-6 hidden rounded-2xl border border-dashed border-[color:var(--border)] bg-[color:var(--surface-muted)] p-5 text-sm text-[color:var(--muted)] md:block">
                             {loading ? (
                                 <div className="space-y-3">
                                     <div className="h-4 w-1/3 animate-pulse rounded-full bg-[color:var(--surface)]" />
@@ -108,7 +110,9 @@ const Generator = ({ page, service }: GeneratorProps) => {
 
             <MovieModal
                 isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
+                isCollapsed={isModalCollapsed}
+                onClose={() => setIsModalCollapsed(true)}
+                onExpand={() => setIsModalCollapsed(false)}
                 onNext={handleGenerate}
                 movie={movie}
                 isLoading={loading}

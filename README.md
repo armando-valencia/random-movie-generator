@@ -35,9 +35,31 @@ netlify dev
 
 Open the local site at `http://localhost:8888`.
 
+Optional local test data:
+-   Add `public/test_data.json` to use local mock results when `VITE_USE_TEST_DATA=true`.
+-   The file is ignored by git, so it stays local only.
+Example shape:
+
+```json
+{
+    "result": [
+        {
+            "title": "Example Movie",
+            "imdbId": "tt1234567",
+            "tmdbId": "12345",
+            "genres": [{ "id": "28", "name": "Action" }],
+            "streamingInfo": {
+                "us": {
+                    "netflix": [{ "type": "subscription" }]
+                }
+            }
+        }
+    ]
+}
+```
+
 ## Todo:
 
--   [ ] Genre filtering
 -   [ ] Add more platforms
 -   [ ] Bookmark movies
 
